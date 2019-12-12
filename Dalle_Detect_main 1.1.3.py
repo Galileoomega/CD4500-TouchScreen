@@ -295,12 +295,14 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
     tempPressEvent = re.sub("\(ABS_MT_..............", "", fileContent)
       #Find relevant data
     pressList = re.findall("code 57.*|code 53.*|code 54.*", tempPressEvent)
+
+    finalListOfData = []
     
     for u in pressList:
       u = re.sub("code | value| alue", "", u)
       finalListOfData += re.split("\s", u)
     index = -1
-    finalListOfData.pop(0)
+    #finalListOfData.pop(0)
     for u in range(0, len(finalListOfData)):
       index += 2
       try:

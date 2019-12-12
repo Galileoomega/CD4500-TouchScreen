@@ -284,7 +284,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
       fileContent = myFile.read()
     except UnicodeDecodeError:
       doesMyFileExist = False
-      print("Error... Unable to find the file")
+      print("Error... Invalid Format")
   except OSError:
     print("Error... Unable to find the file")
     doesMyFileExist = False

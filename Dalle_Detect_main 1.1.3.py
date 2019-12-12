@@ -68,7 +68,7 @@ count = -1
 finalListOfData = ['']
 #for test##################################################
 #path = "C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect\\For test\\debug.txt"
-path = "C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1\\For Test\\debug.txt"
+#path = "C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1\\For Test\\debug.txt"
 
 #-------------------------
 
@@ -398,7 +398,10 @@ while run:
     clickOnMe, focus = mouseOnFocus()
   
   if iPressedMyButton:
-    #path = user_input_value########################################
+    path = user_input_value
+
+    # Put double Backslash for searching the file
+    path = re.sub("[\"]", "", path)
 
     finalListOfData, doesMyFileExist = fileOpenning(part1, finalListOfData, count, doesMyFileExist)
 

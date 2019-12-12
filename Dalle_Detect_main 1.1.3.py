@@ -280,13 +280,16 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
   try:
     myFile = open(path, "r")
     doesMyFileExist = True
+    try:
+      fileContent = myFile.read()
+    except UnicodeDecodeError:
+      doesMyFileExist = False
+      print("Error... Unable to find the file")
   except OSError:
     print("Error... Unable to find the file")
     doesMyFileExist = False
 
   if doesMyFileExist:
-
-    fileContent = myFile.read()
     
     #---------------REG-EX PART---------------
 

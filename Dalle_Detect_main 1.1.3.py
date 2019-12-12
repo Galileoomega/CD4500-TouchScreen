@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 dt = clock.tick(60)
 
 #LOOP VAR
-run = clickOnMe = part1 = True
+run = clickOnMe = part1 = fingerPress = True
 theresSomething = False
 focus = False
 iUsedCtrlV = False
@@ -67,8 +67,9 @@ pressList = ['']
 count = -1
 finalListOfData = ['']
 #for test##################################################
-path = "C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect\\For test\\debug.txt"
-#path = ""
+#path = "C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect\\For test\\debug.txt"
+path = "C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1\\For Test\\debug.txt"
+
 #-------------------------
 
 #TEXT MANAGE
@@ -299,6 +300,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
       u = re.sub("code | value| alue", "", u)
       finalListOfData += re.split("\s", u)
     index = -1
+    finalListOfData.pop(0)
     for u in range(0, len(finalListOfData)):
       index += 2
       try:
@@ -322,19 +324,24 @@ def dataOfCoordinatesSorting(finalListOfData):
         else:
           fingerPress = False
           print("Released")
+      ##else:
+      ##  fingerPress = False
     except IndexError:
+      fingerPress = False
       break
-
-    if fingerPress:
-      count += 1
-      if finalListOfData[count] == '53':
-        print("Pos X : ",finalListOfData[count + 1])
+    try:
+      if fingerPress:
         count += 1
-      if finalListOfData[count] == '54':
-        print("Pos Y : ", finalListOfData[count + 1])
+        if finalListOfData[count] == '53':
+          print("Pos X : ",finalListOfData[count + 1])
+          count += 1
+        if finalListOfData[count] == '54':
+          print("Pos Y : ", finalListOfData[count + 1])
+          count += 1
+      else:
         count += 1
-    else:
-      count += 1
+    except UnboundLocalError:
+      break
 
   return xLine, yLine, xLineEnd, yLineEnd
 

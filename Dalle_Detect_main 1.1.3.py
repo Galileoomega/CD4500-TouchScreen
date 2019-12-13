@@ -298,6 +298,18 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
     tempPressEvent = re.sub("\(ABS_MT_..............", "", fileContent)
       #Find relevant data
     pressList = re.findall("code 57.*|code 53.*|code 54.*", tempPressEvent)
+    
+    for u in pressList:
+      if u == "code 53 (ABS_MT_POSITION_X)":
+        pressList.pop(0)
+      elif u == "code 54 (ABS_MT_POSITION_Y)":
+        pressList.pop(0)
+      elif u == "code 57 (ABS_MT_TRACKING_ID)":
+        pressList.pop(0)
+      print(u)
+
+   # if re.search("^)", str) == True:
+     # print("lal")
 
     finalListOfData = []
     
@@ -309,7 +321,10 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
     for u in range(0, len(finalListOfData)):
       index += 2
       try:
-        finalListOfData[index] = int(finalListOfData[index])
+        try:
+          finalListOfData[index] = int(finalListOfData[index])
+        except ValueError:
+          finalListOfData.pop(index)
       except IndexError:
         pass
 

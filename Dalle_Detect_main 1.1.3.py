@@ -306,10 +306,6 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
         pressList.pop(0)
       elif u == "code 57 (ABS_MT_TRACKING_ID)":
         pressList.pop(0)
-      print(u)
-
-   # if re.search("^)", str) == True:
-     # print("lal")
 
     finalListOfData = []
     

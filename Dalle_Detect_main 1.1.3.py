@@ -300,11 +300,11 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
     pressList = re.findall("code 57.*|code 53.*|code 54.*", tempPressEvent)
     
     for u in pressList:
-      if u == "code 53 (ABS_MT_POSITION_X)":
+      if u == "Event code 53 (ABS_MT_POSITION_X)":
         pressList.pop(0)
-      elif u == "code 54 (ABS_MT_POSITION_Y)":
+      elif u == "Event code 54 (ABS_MT_POSITION_Y)":
         pressList.pop(0)
-      elif u == "code 57 (ABS_MT_TRACKING_ID)":
+      elif u == "Event code 57 (ABS_MT_TRACKING_ID)":
         pressList.pop(0)
 
     finalListOfData = []

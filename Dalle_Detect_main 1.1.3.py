@@ -113,63 +113,63 @@ def setBackgroundColor():
 
 #GRAPHIC
 def mouseOnFocus():
-  if mousePos[0] > xPathField:
-    if mousePos[1] < 40:
-      if mousePos[0] > 1010:
-        clickOnMe = True
-        focus = False
-        pygame.mouse.set_visible(True)
-      else:
-        if pygame.mouse.get_pressed() == (1,0,0):
-          clickOnMe = False
-          focus = True
-          pygame.mouse.set_visible(False)
-        else:
+    if mousePos[0] > xPathField:
+      if mousePos[1] < 40:
+        if mousePos[0] > 1010:
           clickOnMe = True
           focus = False
+          pygame.mouse.set_visible(True)
+        else:
+          if pygame.mouse.get_pressed() == (1,0,0):
+            clickOnMe = False
+            focus = True
+            pygame.mouse.set_visible(False)
+          else:
+            clickOnMe = True
+            focus = False
+      else:
+        pygame.mouse.set_visible(True)
+        clickOnMe = True
+        focus = False
     else:
       pygame.mouse.set_visible(True)
       clickOnMe = True
       focus = False
-  else:
-    pygame.mouse.set_visible(True)
-    clickOnMe = True
-    focus = False
-  return clickOnMe, focus
+    return clickOnMe, focus
 
 def unFocusFilePath(focus):
-  if not(clickOnMe):
-    if pygame.mouse.get_pressed() == (1,0,0):
-        if mousePos[0] > posXInput + widthInput:
-          if mousePos[0] > 1010:
-            focus = iUsedCtrlA = False
-        elif mousePos[0] < posXInput:
-          if mousePos[0] < xPathField:
-            focus = iUsedCtrlA = False
-        elif mousePos[1] > posYInput + heightInput:
-          if mousePos[1] > 40:
-            focus = iUsedCtrlA = False
-        elif mousePos[1] < posYInput:
-          if mousePos[1] < 15:
-            focus = iUsedCtrlA = False
-          if mousePos[1] > 50:
-            focus = iUsedCtrlA = False
-  else:
-    if focus == True:
+    if not(clickOnMe):
       if pygame.mouse.get_pressed() == (1,0,0):
-        if mousePos[0] > 1010:
-          focus = False
-          iUsedCtrlA = False
-        elif mousePos[0] < xPathField:
-          focus = False
-          iUsedCtrlA = False
-        elif mousePos[1] > 40:
-          focus = False
-          iUsedCtrlA = False
-        elif mousePos[1] < 15:
-          focus = False
-          iUsedCtrlA = False
-  return focus
+          if mousePos[0] > posXInput + widthInput:
+            if mousePos[0] > 1010:
+              focus = iUsedCtrlA = False
+          elif mousePos[0] < posXInput:
+            if mousePos[0] < xPathField:
+              focus = iUsedCtrlA = False
+          elif mousePos[1] > posYInput + heightInput:
+            if mousePos[1] > 40:
+              focus = iUsedCtrlA = False
+          elif mousePos[1] < posYInput:
+            if mousePos[1] < 15:
+              focus = iUsedCtrlA = False
+            if mousePos[1] > 50:
+              focus = iUsedCtrlA = False
+    else:
+      if focus == True:
+        if pygame.mouse.get_pressed() == (1,0,0):
+          if mousePos[0] > 1010:
+            focus = False
+            iUsedCtrlA = False
+          elif mousePos[0] < xPathField:
+            focus = False
+            iUsedCtrlA = False
+          elif mousePos[1] > 40:
+            focus = False
+            iUsedCtrlA = False
+          elif mousePos[1] < 15:
+            focus = False
+            iUsedCtrlA = False
+    return focus
 
 def unFocusCtrlA(iUsedCtrlA, user_input):
   if iUsedCtrlA == True:

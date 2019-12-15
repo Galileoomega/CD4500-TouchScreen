@@ -86,7 +86,7 @@ user_input = font.render(user_input_value, True, red)
   #-----------------
 
 #-----------FUNCTION-------------
-#lala
+
 #GRAPHIC : Draw element on the screen
 def drawVisualArea():
   pygame.draw.rect(ecran, whiteVisualiser, (20,20,600,500))

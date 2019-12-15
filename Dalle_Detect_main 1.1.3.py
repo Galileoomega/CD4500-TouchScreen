@@ -193,7 +193,10 @@ def unFocusCtrlA(iUsedCtrlA, user_input):
 def getContentOfClipboard():
   try:
     clipboard = pygame.scrap.get(pygame.SCRAP_TEXT)
-    clipboard = clipboard.decode("utf-8")
+    try:
+      clipboard = clipboard.decode("utf-8")
+    except UnicodeDecodeError:
+      clipboard = ''
   except AttributeError:
     pass
   try:
@@ -296,16 +299,10 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
     #Find X Data
       #Delete useless data
     tempPressEvent = re.sub("\(ABS_MT_..............", "", fileContent)
+    tempPressEvent = re.sub("Event code.*", "", tempPressEvent)
       #Find relevant data
+
     pressList = re.findall("code 57.*|code 53.*|code 54.*", tempPressEvent)
-    
-    for u in pressList:
-      if u == "Event code 53 (ABS_MT_POSITION_X)":
-        pressList.pop(0)
-      elif u == "Event code 54 (ABS_MT_POSITION_Y)":
-        pressList.pop(0)
-      elif u == "Event code 57 (ABS_MT_TRACKING_ID)":
-        pressList.pop(0)
 
     finalListOfData = []
     

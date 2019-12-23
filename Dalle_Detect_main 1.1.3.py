@@ -76,11 +76,13 @@ finalListOfData = ['']
 #TEXT MANAGE
   #---Define font---
 font = pygame.font.Font('Resources\\font.ttf', 14)
+waitFont = pygame.font.Font('Resources\\font.ttf', 24)
 secondFont = pygame.font.Font('Resources\\font.ttf', 16)
 font2 = pygame.font.Font('freesansbold.ttf', 32)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
+lblLoading = waitFont.render(str("Wait..."), True, black)
 lblFindPath = font.render(str("Search..."), True, black)
 lblButton = secondFont.render("Calculate... ", True, black)
 user_input = font.render(user_input_value, True, red)
@@ -366,7 +368,7 @@ while run:
   clock.tick(60)
   mousePos = pygame.mouse.get_pos()
 
-  #Get what you have in your clipboard
+  # Get what you have in your clipboard
   clipboard = getContentOfClipboard()
 
   focus = unFocusFilePath(focus)
@@ -374,7 +376,7 @@ while run:
   if iUsedCtrlA:
     iUsedCtrlA, user_input = unFocusCtrlA(iUsedCtrlA, user_input)
 
-  #WAIT TO QUIT 
+  # WAIT TO QUIT 
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       run = False
@@ -382,10 +384,10 @@ while run:
     elif not(clickOnMe):
       if event.type == pygame.KEYDOWN:
 
-        #Detect if user press CTRL + V
+        # Detect if user press CTRL + V
         iUsedCtrlV, user_input_value = keyboardCommandDetection(user_input_value)        
 
-        #Delete element if Backspace is pressed
+        # Delete element if Backspace is pressed
         if event.key == pygame.K_BACKSPACE:
             user_input_value = user_input_value[:-1]
             if iUsedCtrlA:
@@ -412,6 +414,7 @@ while run:
     clickOnMe, focus = mouseOnFocus()
   
   if iPressedMyButton:
+
     path = user_input_value
 
     # Put double Backslash for searching the file
@@ -422,16 +425,16 @@ while run:
     if doesMyFileExist:
       dataOfCoordinatesSorting(finalListOfData)
       iPressedMyButton = False
-
   else:
     xLine = 0
     yLine = 0
     xLineEnd = 0
     yLineEnd = 0
 
+  # Check If I Pressed My Button
   myChangingColor, iPressedMyButton, lblButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton)
   
-  #VISUAL AND CONSTANT STUFF
+  # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
 
@@ -441,16 +444,20 @@ while run:
   
   ecran.blit(lblFindEvtest, (700, 20))
 
-  #Write what the user is typping
+  # Write what the user is typping
   if iUsedCtrlA:
     user_input = secondFont.render(user_input_value, True, black, blue)
   ecran.blit(user_input, (xText, yText))
 
   if clickOnMe:
-    #Hide if the text is going too far
+    # Hide if the text is going too far
     pygame.draw.rect(ecran, whiteBackground, (1010,20,200,23))
 
-  #Call mouse Manager
+  if iPressedMyButton:
+    # Show a wait label
+    ecran.blit(lblLoading, (300,300))
+
+  # Call mouse Manager
   changeMyMouseLook()  
 
   pygame.display.update() 

@@ -29,6 +29,7 @@ iUsedCtrlV = False
 iUsedCtrlA = False
 iPressedMyButton = False
 doesMyFileExist = True
+validState = False
 
 #COLOR VAR
 red = (208, 14, 14)
@@ -50,6 +51,8 @@ posXInput = 180
 posYInput = yText = 300
 xText = 150
 xButton = 1000
+loopData = 0
+countOf = 0
 yButton = 620
 
 #OTHER VAR
@@ -460,6 +463,26 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
   return coordinatesOfLayer
 
+def drawLine(coordinatesOfLayer, validState, loopData):
+
+  try:
+    lala = coordinatesOfLayer[loopData + 3]
+    validState = True
+  except IndexError:
+    pass
+
+  if validState:
+    startx = coordinatesOfLayer[loopData]
+    starty = coordinatesOfLayer[loopData + 1]
+    endx = coordinatesOfLayer[loopData + 2]
+    endy = coordinatesOfLayer[loopData + 3]
+
+    pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
+
+    loopData += 4
+
+  return loopData
+
 #--------------------------------
 
 while run:
@@ -563,7 +586,7 @@ while run:
   # Call mouse Manager
   changeMyMouseLook()  
 
-  pygame.draw.line(ecran, red, (10, 10), (100, 100), 5)
+  loopData = drawLine(coordinatesOfLayer, validState, loopData)
 
   pygame.display.update() 
 

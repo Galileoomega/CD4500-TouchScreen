@@ -491,7 +491,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 
     pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
-    loopData += 4
+    loopData += 2
 
   return loopData
 

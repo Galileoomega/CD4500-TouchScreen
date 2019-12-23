@@ -15,6 +15,7 @@ ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser")
 pygame.scrap.init()
 
+
 #-----------VAR-----------
 #SETTING FPS
 clock = pygame.time.Clock()

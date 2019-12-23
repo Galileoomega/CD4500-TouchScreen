@@ -67,6 +67,7 @@ temp.set_alpha(100)
 
 count = -1
 finalListOfData = pressList = ['']
+coordinatesOfLayer = []
 #-------------------------
 
 #TEXT MANAGE
@@ -339,11 +340,10 @@ def dataOfCoordinatesSorting(finalListOfData):
         else:
           fingerPress = False
           print("Released")
-      ##else:
-      ##  fingerPress = False
     except IndexError:
       fingerPress = False
       break
+
     try:
       if fingerPress:
         count += 1
@@ -358,7 +358,107 @@ def dataOfCoordinatesSorting(finalListOfData):
     except UnboundLocalError:
       break
 
-  return xLine, yLine, xLineEnd, yLineEnd
+def whereToDrawLine(finalListOfData, coordinatesOfLayer):
+  count = 0
+  press = yAdded = xAdded = False
+  lineX = 0
+  lineY = 0
+  nextLineX = -1
+  nextLineY = -1
+  firstPassOfX = firstPassOfY = True
+  iHaveMyNextDataX = iHaveMyNextDataY = False
+
+  for u in range(0, len(finalListOfData)):
+    # Detect if Press or Release.
+    try:
+      # If its a press or a release
+      if finalListOfData[count] == "57":
+        count +=1
+        xAdded = yAdded = False
+
+        if not(firstPassOfX):
+          if not(firstPassOfY):
+            if nextLineX == lineX:
+              if nextLineY == lineY:
+                coordinatesOfLayer.append(lineX)
+                coordinatesOfLayer.append(lineY)
+
+        lineY = 0
+
+        # Press
+        if finalListOfData[count] > 0:
+          press = True
+          count += 1
+        # Release
+        else:
+          firstPassOfX = firstPassOfY = True
+          press = False
+      
+    except IndexError:
+      break
+
+    if xAdded:
+      if yAdded:
+        xAdded = yAdded = False
+    
+    lineY = 0
+
+    if press == True:
+      # If its a X position
+      if not(xAdded):
+        if finalListOfData[count] == "53":
+          count += 1
+
+          xAdded = True
+
+          if firstPassOfX:
+            lineX = finalListOfData[count]
+            nextLineX = lineX
+            coordinatesOfLayer.append(lineX)
+            firstPassOfX = False
+          else:
+            nextLineX = finalListOfData[count]
+            coordinatesOfLayer.append(nextLineX)
+            iHaveMyNextDataX = True
+        else:
+          coordinatesOfLayer.append(lineX)
+          xAdded = True
+        
+
+      # If its a Y position
+      if not(yAdded):
+        if finalListOfData[count] == "54":
+          count += 1
+
+          yAdded = True
+
+          if firstPassOfY:
+            lineY = finalListOfData[count]
+            nextLineY = lineY
+            coordinatesOfLayer.append(lineY)
+            firstPassOfY = False
+          else:
+            nextLineY = finalListOfData[count]
+            coordinatesOfLayer.append(nextLineY)
+            iHaveMyNextDataY = True
+        else:
+          if lineY != 0:
+            coordinatesOfLayer.append(lineY)
+            yAdded = True
+
+
+      if iHaveMyNextDataY:
+        if iHaveMyNextDataX:
+          try:            
+            lineX = nextLineX
+            lineY = nextLineY
+          except UnboundLocalError:
+            pass
+    else:
+      pass
+    count += 1
+
+  return coordinatesOfLayer
 
 #--------------------------------
 
@@ -423,12 +523,10 @@ while run:
 
     if doesMyFileExist:
       dataOfCoordinatesSorting(finalListOfData)
+
+      coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
+
       iPressedMyButton = False
-  else:
-    xLine = 0
-    yLine = 0
-    xLineEnd = 0
-    yLineEnd = 0
 
   # Check If I Pressed My Button
   myChangingColor, iPressedMyButton, lblButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton)
@@ -436,8 +534,6 @@ while run:
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
-
-  pygame.draw.line(ecran, red, (int(xLine), int(yLine)), (int(xLineEnd), int(yLineEnd)), 5)
 
   # Draw the path area and the letter input
   xText, yText, user_input = drawPathArea(user_input, xText, yText)
@@ -455,6 +551,7 @@ while run:
     pygame.draw.rect(ecran, whiteBackground, (1010,20,200,23))
 
   if iPressedMyButton:
+    
     if doesMyFileExist:
       # Show a wait label
       ecran.blit(lblLoading, (300,300))
@@ -465,6 +562,8 @@ while run:
 
   # Call mouse Manager
   changeMyMouseLook()  
+
+  pygame.draw.line(ecran, red, (10, 10), (100, 100), 5)
 
   pygame.display.update() 
 

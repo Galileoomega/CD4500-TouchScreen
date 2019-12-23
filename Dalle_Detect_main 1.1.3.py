@@ -5,8 +5,8 @@
 ##============================================================ 
 
 import pygame, os, re
-#os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
-os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
+os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
+#os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
 
 #INITIALISATION

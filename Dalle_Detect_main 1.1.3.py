@@ -5,7 +5,7 @@
 ##============================================================ 
 
 import pygame, os, re
-os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
+#os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
 ##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
 
@@ -97,7 +97,7 @@ def drawVisualArea():
   
   ecran.blit(lblButton, (xButton + 30, yButton + 10))
 
-#GRAPHIC : Print user key press
+#GRAPHIC : Print user key press and the path field
 def drawPathArea(user_input, xText, yText):
   pygame.draw.rect(ecran, whiteVisualiser, (xPathField,20,210,23))
 
@@ -440,8 +440,10 @@ while run:
 
   pygame.draw.line(ecran, red, (int(xLine), int(yLine)), (int(xLineEnd), int(yLineEnd)), 5)
 
+  # Draw the path area and the letter input
   xText, yText, user_input = drawPathArea(user_input, xText, yText)
   
+  # Draw a label "EV Test :"
   ecran.blit(lblFindEvtest, (700, 20))
 
   # Write what the user is typping

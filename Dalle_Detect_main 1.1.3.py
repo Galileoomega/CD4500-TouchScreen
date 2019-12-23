@@ -43,6 +43,7 @@ myChangingColor = whiteVisualiser
 #POSITION VAR
 pos = pos1 = 0, 0
 xPathField = 800
+yPathField = 20
 heightInput = 50
 widthInput = 860
 posXInput = 180
@@ -64,13 +65,8 @@ temp.blit(ecran, (-x, -y))
 temp.blit(blackBackground, (0, 0))
 temp.set_alpha(100)
 
-pressList = ['']
 count = -1
-finalListOfData = ['']
-#for test##################################################
-#path = "C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect\\For test\\debug.txt"
-#path = "C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1\\For Test\\debug.txt"
-
+finalListOfData = pressList = ['']
 #-------------------------
 
 #TEXT MANAGE
@@ -79,10 +75,12 @@ font = pygame.font.Font('Resources\\font.ttf', 14)
 waitFont = pygame.font.Font('Resources\\font.ttf', 24)
 secondFont = pygame.font.Font('Resources\\font.ttf', 16)
 font2 = pygame.font.Font('freesansbold.ttf', 32)
+errorFont = pygame.font.Font('Resources\\font.ttf', 12)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
 lblLoading = waitFont.render(str("Wait..."), True, black)
+lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 lblFindPath = font.render(str("Search..."), True, black)
 lblButton = secondFont.render("Calculate... ", True, black)
 user_input = font.render(user_input_value, True, red)
@@ -90,16 +88,16 @@ user_input = font.render(user_input_value, True, red)
 
 #-----------FUNCTION-------------
 
-#GRAPHIC : Draw element on the screen
+# GRAPHIC : Draw element on the screen
 def drawVisualArea():
   pygame.draw.rect(ecran, whiteVisualiser, (20,20,600,500))
   pygame.draw.rect(ecran, myChangingColor, (xButton,yButton,140,50))
   
   ecran.blit(lblButton, (xButton + 30, yButton + 10))
 
-#GRAPHIC : Print user key press and the path field
+# GRAPHIC : Print user key press and the path field
 def drawPathArea(user_input, xText, yText):
-  pygame.draw.rect(ecran, whiteVisualiser, (xPathField,20,210,23))
+  pygame.draw.rect(ecran, whiteVisualiser, (xPathField,yPathField,210,23))
 
   xText, yText, user_input = replaceText(user_input, user_input_value)
   
@@ -110,11 +108,11 @@ def drawPathArea(user_input, xText, yText):
     ecran.blit(temp, (0,0))
   return xText, yText, user_input
 
-#GRAPHIC
+# GRAPHIC
 def setBackgroundColor():
   ecran.fill(whiteBackground)
 
-#GRAPHIC
+# GRAPHIC
 def mouseOnFocus():
     if mousePos[0] > xPathField:
       if mousePos[1] < 40:
@@ -192,7 +190,7 @@ def unFocusCtrlA(iUsedCtrlA, user_input):
         user_input = font.render(user_input_value, True, black)
   return iUsedCtrlA, user_input
 
-#GRAPHIC : Will take the text of the clipboard
+# GRAPHIC : Will take the text of the clipboard
 def getContentOfClipboard():
   try:
     clipboard = pygame.scrap.get(pygame.SCRAP_TEXT)
@@ -208,11 +206,11 @@ def getContentOfClipboard():
     pass
   return clipboard
 
-#GRAPHIC : Will Put Text In The Clipboard
+# GRAPHIC : Will Put Text In The Clipboard
 def textInsertInClipboard():
   pygame.scrap.put()
 
-#GRAPHIC : Detect a CTRL + V or C
+# GRAPHIC : Detect a CTRL + V or C
 def keyboardCommandDetection(user_input_value):
   if event.key == pygame.K_v and pygame.key.get_mods() & pygame.KMOD_CTRL:
       user_input_value += str(clipboard)
@@ -221,7 +219,7 @@ def keyboardCommandDetection(user_input_value):
       iUsedCtrlV = False
   return iUsedCtrlV, user_input_value
 
-#GRAPHIC : Detect a CTRL + A
+# GRAPHIC : Detect a CTRL + A
 def selectAllText(user_input_value):
   if event.key == pygame.K_a and pygame.key.get_mods() & pygame.KMOD_CTRL:
     iUsedCtrlA = True
@@ -230,7 +228,7 @@ def selectAllText(user_input_value):
     user_input_value = user_input_value
   return iUsedCtrlA, user_input_value
 
-#GRAPHIC
+# GRAPHIC
 def changeMyMouseLook():
   if not(clickOnMe):
     ecran.blit(MANUAL_CURSOR, ( pygame.mouse.get_pos() ) ) 
@@ -238,7 +236,7 @@ def changeMyMouseLook():
     if clickOnMe:
       ecran.blit(lblFindPath, (805, 20))
 
-#GRAPHIC : Put a default label if nothing has been wrote 
+# GRAPHIC : Put a default label if nothing has been wrote 
 def itIsEmpty():
   if len(user_input_value) != 0:
     theresSomething = True
@@ -246,7 +244,7 @@ def itIsEmpty():
     theresSomething = False
   return theresSomething
 
-#Change his placement when press on search
+# Change his placement when press on search
 def replaceText(user_input, user_input_value):
   if clickOnMe:
     xText = 800
@@ -261,6 +259,7 @@ def replaceText(user_input, user_input_value):
     user_input = secondFont.render(user_input_value, True, white)
   return xText, yText, user_input
 
+# Detect If User Click On Button "Calculate..."
 def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
   if clickOnMe:
     if pygame.mouse.get_pressed() == (1,0,0):
@@ -456,8 +455,13 @@ while run:
     pygame.draw.rect(ecran, whiteBackground, (1010,20,200,23))
 
   if iPressedMyButton:
-    # Show a wait label
-    ecran.blit(lblLoading, (300,300))
+    if doesMyFileExist:
+      # Show a wait label
+      ecran.blit(lblLoading, (300,300))
+
+  if not(doesMyFileExist):
+    # Show an error when the file cannot be found
+    ecran.blit(lblFileError, (xPathField, yPathField + 50))
 
   # Call mouse Manager
   changeMyMouseLook()  

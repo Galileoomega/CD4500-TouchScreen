@@ -387,6 +387,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
                 coordinatesOfLayer.append(lineY)
 
         lineY = 0
+        iHaveMyNextDataX = iHaveMyNextDataY = False
 
         # Press
         if finalListOfData[count] > 0:
@@ -405,12 +406,18 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
         xAdded = yAdded = False
     
     lineY = 0
+    lineX = 0
 
     if press == True:
-      # If its a X position
-      if not(xAdded):
+        # If its a X position
         if finalListOfData[count] == "53":
           count += 1
+
+          if iHaveMyNextDataX:
+            if not(yAdded):
+              if xAdded:
+                coordinatesOfLayer.append(nextLineY)
+                yAdded = True
 
           xAdded = True
 
@@ -424,14 +431,18 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
             coordinatesOfLayer.append(nextLineX)
             iHaveMyNextDataX = True
         else:
-          coordinatesOfLayer.append(lineX)
-          xAdded = True
+          if lineX != 0:
+            coordinatesOfLayer.append(lineX)
+            xAdded = True
         
 
-      # If its a Y position
-      if not(yAdded):
+        # If its a Y position
         if finalListOfData[count] == "54":
           count += 1
+
+          if not(xAdded):
+              coordinatesOfLayer.append(nextLineX)
+              xAdded = True
 
           yAdded = True
 
@@ -450,13 +461,14 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
             yAdded = True
 
 
-      if iHaveMyNextDataY:
-        if iHaveMyNextDataX:
-          try:            
-            lineX = nextLineX
-            lineY = nextLineY
-          except UnboundLocalError:
-            pass
+        if not(iHaveMyNextDataY):
+          if not(iHaveMyNextDataX):
+                try:     
+                  pass       
+                  lineX = nextLineX
+                  lineY = nextLineY
+                except UnboundLocalError:
+                  pass
     else:
       pass
     count += 1

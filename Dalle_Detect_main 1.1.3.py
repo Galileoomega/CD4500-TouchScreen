@@ -461,7 +461,7 @@ while run:
 
   if not(doesMyFileExist):
     # Show an error when the file cannot be found
-    ecran.blit(lblFileError, (xPathField, yPathField + 50))
+    ecran.blit(lblFileError, (xPathField, yPathField + 25))
 
   # Call mouse Manager
   changeMyMouseLook()  

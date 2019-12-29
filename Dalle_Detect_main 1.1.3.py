@@ -4,7 +4,7 @@
 ##===                         v1.1.3
 ##============================================================ 
 
-import pygame, os, re
+import pygame, os, re, time
 #os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
 ##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
@@ -72,6 +72,7 @@ count = -1
 finalListOfData = pressList = ['']
 coordinatesOfLayer = [int]
 coordinatesOfLayer.pop(0)
+releaseSeparator = 111111
 
 #-------------------------
 
@@ -276,6 +277,7 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
                 myChangingColor = black
                 lblButton = secondFont.render("Calculate... ", True, white)
                 iPressedMyButton = True
+
     else:
       myChangingColor = (220,220,220)
       iPressedMyButton = False
@@ -284,6 +286,7 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
     myChangingColor = (220,220,220)
     iPressedMyButton = False
     lblButton = secondFont.render("Calculate... ", True, black)
+
     
   return myChangingColor, iPressedMyButton, lblButton
 
@@ -373,7 +376,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
   lineX = lineY = count = 0
   nextLineX = nextLineY = -1
 
-  for u in range(0, len(finalListOfData) - 2):
+  for u in range(count, len(finalListOfData)):
     needToExit = False
     # Detect if Press or Release.
     try:
@@ -400,6 +403,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
         else:
           firstPassOfX = firstPassOfY = True
           press = False
+          coordinatesOfLayer.append(releaseSeparator)
       
     except IndexError:
       break
@@ -497,6 +501,8 @@ def drawLine(coordinatesOfLayer, validState, loopData):
     starty = coordinatesOfLayer[loopData + 1]
     endx = coordinatesOfLayer[loopData + 2]
     endy = coordinatesOfLayer[loopData + 3]
+    if coordinatesOfLayer[loopData + 4] == releaseSeparator:
+      loopData += 3
 
     pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
@@ -566,11 +572,14 @@ while run:
     finalListOfData, doesMyFileExist = fileOpenning(part1, finalListOfData, count, doesMyFileExist)
 
     if doesMyFileExist:
-      dataOfCoordinatesSorting(finalListOfData)
+        if iPressedMyButton:
 
-      coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
+          dataOfCoordinatesSorting(finalListOfData)
 
-      iPressedMyButton = False
+          ##if len(coordinatesOfLayer) == 0:
+          coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
+
+          iPressedMyButton = False
 
   # Check If I Pressed My Button
   myChangingColor, iPressedMyButton, lblButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton)

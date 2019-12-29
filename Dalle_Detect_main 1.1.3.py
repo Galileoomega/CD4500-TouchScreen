@@ -70,7 +70,9 @@ temp.set_alpha(100)
 
 count = -1
 finalListOfData = pressList = ['']
-coordinatesOfLayer = []
+coordinatesOfLayer = [int]
+coordinatesOfLayer.pop(0)
+
 #-------------------------
 
 #TEXT MANAGE
@@ -361,17 +363,18 @@ def dataOfCoordinatesSorting(finalListOfData):
     except UnboundLocalError:
       break
 
+# PROGRAM
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
-  count = 0
+
   press = yAdded = xAdded = False
-  lineX = 0
-  lineY = 0
-  nextLineX = -1
-  nextLineY = -1
   firstPassOfX = firstPassOfY = True
   iHaveMyNextDataX = iHaveMyNextDataY = False
 
-  for u in range(0, len(finalListOfData)):
+  lineX = lineY = count = 0
+  nextLineX = nextLineY = -1
+
+  for u in range(0, len(finalListOfData) - 2):
+    needToExit = False
     # Detect if Press or Release.
     try:
       # If its a press or a release
@@ -404,6 +407,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
     if xAdded:
       if yAdded:
         xAdded = yAdded = False
+        firstPassOfX = firstPassOfY = False
     
     lineY = 0
     lineX = 0
@@ -418,18 +422,22 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
               if xAdded:
                 coordinatesOfLayer.append(nextLineY)
                 yAdded = True
+                needToExit = True
+                count -= 2
+                #THEN NEED TO EXIT
 
           xAdded = True
-
-          if firstPassOfX:
-            lineX = finalListOfData[count]
-            nextLineX = lineX
-            coordinatesOfLayer.append(lineX)
-            firstPassOfX = False
-          else:
-            nextLineX = finalListOfData[count]
-            coordinatesOfLayer.append(nextLineX)
-            iHaveMyNextDataX = True
+          if not(needToExit):
+            if firstPassOfX:
+              lineX = finalListOfData[count]
+              nextLineX = lineX
+              coordinatesOfLayer.append(lineX)
+              firstPassOfX = False
+            else:
+              nextLineX = finalListOfData[count]
+              if xAdded:
+                coordinatesOfLayer.append(nextLineX)
+              iHaveMyNextDataX = True
         else:
           if lineX != 0:
             coordinatesOfLayer.append(lineX)
@@ -480,6 +488,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
   try:
     lala = coordinatesOfLayer[loopData + 3]
     validState = True
+    print(coordinatesOfLayer)
   except IndexError:
     pass
 

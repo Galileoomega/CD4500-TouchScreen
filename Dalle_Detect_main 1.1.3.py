@@ -342,7 +342,7 @@ def dataOfCoordinatesSorting(finalListOfData):
     try:
       if finalListOfData[count] == "57":
         count += 1
-        if finalListOfData[count] > 0:
+        if finalListOfData[count] >= 0:
           fingerPress = True
           print("Press")
         else:
@@ -396,7 +396,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
         iHaveMyNextDataX = iHaveMyNextDataY = False
 
         # Press
-        if finalListOfData[count] > 0:
+        if finalListOfData[count] >= 0:
           press = True
           count += 1
         # Release
@@ -428,7 +428,6 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
                 yAdded = True
                 needToExit = True
                 count -= 2
-                #THEN NEED TO EXIT
 
           xAdded = True
           if not(needToExit):
@@ -492,9 +491,8 @@ def drawLine(coordinatesOfLayer, validState, loopData):
   try:
     lala = coordinatesOfLayer[loopData + 3]
     validState = True
-    print(coordinatesOfLayer)
   except IndexError:
-    pass
+    loopData = 0
 
   if validState:
     startx = coordinatesOfLayer[loopData]

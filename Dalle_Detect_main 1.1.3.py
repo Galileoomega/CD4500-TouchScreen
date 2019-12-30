@@ -54,10 +54,12 @@ yStopButton = yButton
 
 #OTHER VAR
 user_input_value = ""
+path = ""
   # Cursor look
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
 blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
+
 location = (0,0)
 x = location[0]
 y = location[1]
@@ -71,7 +73,7 @@ finalListOfData = pressList = ['']
 coordinatesOfLayer = [int]
 coordinatesOfLayer.pop(0)
 releaseSeparator = 111111
-pathChecker = ""
+oldPath = ""
 
 #-------------------------
 
@@ -273,8 +275,12 @@ def replaceText(user_input, user_input_value):
     user_input = secondFont.render(user_input_value, True, white)
   return xText, yText, user_input
 
+def pathChecker(path):
+  oldPath = path
+  return path
+
 # Detect If User Click On Button "Calculate..."
-def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker):
+def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker, path):
   if clickOnMe:
     if pygame.mouse.get_pressed() == (1,0,0):
         if mousePos[0] > xButton:
@@ -285,7 +291,8 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMySt
                 lblButton = secondFont.render("Calculate... ", True, white)
                 iPressedMyButton = True
                 iPressedMyStopButton = False
-                pathChecker = path######################################################################################
+
+                pathChecker(path)
 
     else:
       myChangingColor = (220,220,220)
@@ -526,14 +533,18 @@ def drawLine(coordinatesOfLayer, validState, loopData):
     validState = True
   except IndexError:
     loopData = 0
+    validState = False
 
   if validState:
     startx = coordinatesOfLayer[loopData]
     starty = coordinatesOfLayer[loopData + 1]
     endx = coordinatesOfLayer[loopData + 2]
     endy = coordinatesOfLayer[loopData + 3]
-    if coordinatesOfLayer[loopData + 4] == releaseSeparator:
-      loopData += 3
+    try:
+      if coordinatesOfLayer[loopData + 4] == releaseSeparator:
+        loopData += 3
+    except IndexError:
+      loopData = 0
 
     pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
@@ -613,7 +624,7 @@ while run:
           iPressedMyButton = False
 
   # Check If I Pressed My Button
-  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker)
+  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker, path)
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
   
   if iPressedMyButton:

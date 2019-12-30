@@ -75,6 +75,8 @@ coordinatesOfLayer.pop(0)
 releaseSeparator = 111111
 oldPath = ""
 
+numberOfFPS = 60
+
 #-------------------------
 
 #TEXT MANAGE
@@ -275,6 +277,8 @@ def replaceText(user_input, user_input_value):
     user_input = secondFont.render(user_input_value, True, white)
   return xText, yText, user_input
 
+
+# MAYBE TO DELETE ???? AND HIS CHILD
 def pathChecker(path):
   oldPath = path
   return path
@@ -422,6 +426,10 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
       # If its a press or a release
       if finalListOfData[count] == "57":
         count +=1
+        if xAdded:
+          if not(yAdded):
+            coordinatesOfLayer.append(nextLineY)
+            
         xAdded = yAdded = False
 
         if not(firstPassOfX):
@@ -523,11 +531,12 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
       pass
     count += 1
 
+  print(coordinatesOfLayer)
   return coordinatesOfLayer
 
 # Graphic Draw simulation line 
 def drawLine(coordinatesOfLayer, validState, loopData):
-
+  firstPass = True
   try:
     lala = coordinatesOfLayer[loopData + 3]
     validState = True
@@ -536,6 +545,19 @@ def drawLine(coordinatesOfLayer, validState, loopData):
     validState = False
 
   if validState:
+    try:
+      if coordinatesOfLayer[loopData + 4] == releaseSeparator:
+        if firstPass:
+          firstPass = False
+        else:
+          loopData += 3
+      try:
+        lala = coordinatesOfLayer[loopData + 3]
+      except IndexError:
+        loopData = 0
+    except IndexError:
+      loopData = 0
+
     startx = coordinatesOfLayer[loopData]
     starty = coordinatesOfLayer[loopData + 1]
     endx = coordinatesOfLayer[loopData + 2]
@@ -556,7 +578,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 
 while run:
 
-  clock.tick(60)
+  clock.tick(numberOfFPS)
   mousePos = pygame.mouse.get_pos()
 
   # Get what you have in your clipboard
@@ -662,8 +684,6 @@ while run:
 
   # Call mouse Manager
   changeMyMouseLook()  
-
-  print(iPressedMyStopButton)
 
   if not(iPressedMyStopButton):
     loopData = drawLine(coordinatesOfLayer, validState, loopData)

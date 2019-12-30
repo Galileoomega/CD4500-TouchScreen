@@ -23,11 +23,7 @@ dt = clock.tick(60)
 
 #LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
-theresSomething = False
-focus = False
-iUsedCtrlV = False
-iUsedCtrlA = False
-iPressedMyButton = False
+theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = False
 doesMyFileExist = True
 validState = False
 
@@ -39,7 +35,7 @@ white = (255,255,255)
 customBlack = (33,29,50)
 whiteBackground = (245, 245, 245)
 whiteVisualiser = (220, 220, 220)
-myChangingColor = whiteVisualiser
+myChangingColor = stopButtonColor = whiteVisualiser
 
 #POSITION VAR
 pos = pos1 = 0, 0
@@ -49,14 +45,16 @@ heightInput = 50
 widthInput = 860
 posXInput = 180
 posYInput = yText = 300
-xText = 150
 xButton = 1000
-loopData = 0
-countOf = 0
+loopData = countOf = 0
 yButton = 620
+xText = 150
+xStopButton = 50
+yStopButton = yButton
 
 #OTHER VAR
 user_input_value = ""
+  # Cursor look
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
 blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
@@ -78,11 +76,11 @@ releaseSeparator = 111111
 
 #TEXT MANAGE
   #---Define font---
-font = pygame.font.Font('Resources\\font.ttf', 14)
-waitFont = pygame.font.Font('Resources\\font.ttf', 24)
-secondFont = pygame.font.Font('Resources\\font.ttf', 16)
+font = pygame.font.Font('Resources\\OpenSans-Light.ttf', 14)
+waitFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 24)
+secondFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 16)
 font2 = pygame.font.Font('freesansbold.ttf', 32)
-errorFont = pygame.font.Font('Resources\\font.ttf', 12)
+errorFont = pygame.font.Font('Resources\\OpenSans-Bold.ttf', 14)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
@@ -90,6 +88,7 @@ lblLoading = waitFont.render(str("Wait..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 lblFindPath = font.render(str("Search..."), True, black)
 lblButton = secondFont.render("Calculate... ", True, black)
+lblStopButton = secondFont.render("Stop... ", True, black)
 user_input = font.render(user_input_value, True, red)
   #-----------------
 
@@ -97,10 +96,17 @@ user_input = font.render(user_input_value, True, red)
 
 # GRAPHIC : Draw element on the screen
 def drawVisualArea():
-  pygame.draw.rect(ecran, whiteVisualiser, (20,20,600,500))
-  pygame.draw.rect(ecran, myChangingColor, (xButton,yButton,140,50))
   
+    # Visualiser Area
+  pygame.draw.rect(ecran, whiteVisualiser, (20,20,600,500))
+
+    # "Calculate" Button
+  pygame.draw.rect(ecran, myChangingColor, (xButton, yButton, 140, 50))
   ecran.blit(lblButton, (xButton + 30, yButton + 10))
+
+    #"Stop" Button
+  pygame.draw.rect(ecran, stopButtonColor, (xStopButton, yStopButton, 140, 50))
+  ecran.blit(lblStopButton, (xStopButton + 45, yStopButton + 10))
 
 # GRAPHIC : Print user key press and the path field
 def drawPathArea(user_input, xText, yText):
@@ -235,7 +241,7 @@ def selectAllText(user_input_value):
     user_input_value = user_input_value
   return iUsedCtrlA, user_input_value
 
-# GRAPHIC
+# GRAPHIC : Replace cursor design.
 def changeMyMouseLook():
   if not(clickOnMe):
     ecran.blit(MANUAL_CURSOR, ( pygame.mouse.get_pos() ) ) 
@@ -289,6 +295,31 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
 
     
   return myChangingColor, iPressedMyButton, lblButton
+
+# Detect If User Click On Button "Stop..."
+def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
+  if clickOnMe:
+    if pygame.mouse.get_pressed() == (1,0,0):
+        if mousePos[0] > xStopButton:
+          if mousePos[0] < xStopButton + 140:
+            if mousePos[1] > yStopButton:
+              if mousePos[1] < yStopButton + 50:
+                stopButtonColor = black
+                lblStopButton = secondFont.render("Stop... ", True, white)
+                iPressedMyStopButton = True
+
+    else:
+      stopButtonColor = (220,220,220)
+      iPressedMyStopButton = False
+      lblStopButton = secondFont.render("Stop... ", True, black)
+  else:
+    stopButtonColor = (220,220,220)
+    iPressedMyStopButton = False
+    lblStopButton = secondFont.render("stop... ", True, black)
+
+    
+  return stopButtonColor, iPressedMyStopButton, lblStopButton
+
 
 def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
   try:
@@ -366,7 +397,7 @@ def dataOfCoordinatesSorting(finalListOfData):
     except UnboundLocalError:
       break
 
-# PROGRAM
+# PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
   press = yAdded = xAdded = False
@@ -486,6 +517,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
   return coordinatesOfLayer
 
+# Graphic Draw simulation line 
 def drawLine(coordinatesOfLayer, validState, loopData):
 
   try:
@@ -581,6 +613,7 @@ while run:
 
   # Check If I Pressed My Button
   myChangingColor, iPressedMyButton, lblButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton)
+  stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
   
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()

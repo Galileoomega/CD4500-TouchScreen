@@ -71,6 +71,7 @@ finalListOfData = pressList = ['']
 coordinatesOfLayer = [int]
 coordinatesOfLayer.pop(0)
 releaseSeparator = 111111
+pathChecker = ""
 
 #-------------------------
 
@@ -273,7 +274,7 @@ def replaceText(user_input, user_input_value):
   return xText, yText, user_input
 
 # Detect If User Click On Button "Calculate..."
-def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
+def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker):
   if clickOnMe:
     if pygame.mouse.get_pressed() == (1,0,0):
         if mousePos[0] > xButton:
@@ -283,6 +284,8 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
                 myChangingColor = black
                 lblButton = secondFont.render("Calculate... ", True, white)
                 iPressedMyButton = True
+                iPressedMyStopButton = False
+                pathChecker = path######################################################################################
 
     else:
       myChangingColor = (220,220,220)
@@ -294,7 +297,7 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton):
     lblButton = secondFont.render("Calculate... ", True, black)
 
     
-  return myChangingColor, iPressedMyButton, lblButton
+  return myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker
 
 # Detect If User Click On Button "Stop..."
 def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
@@ -307,14 +310,12 @@ def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
                 stopButtonColor = black
                 lblStopButton = secondFont.render("Stop... ", True, white)
                 iPressedMyStopButton = True
-
+                
     else:
       stopButtonColor = (220,220,220)
-      iPressedMyStopButton = False
       lblStopButton = secondFont.render("Stop... ", True, black)
   else:
     stopButtonColor = (220,220,220)
-    iPressedMyStopButton = False
     lblStopButton = secondFont.render("stop... ", True, black)
 
     
@@ -612,9 +613,13 @@ while run:
           iPressedMyButton = False
 
   # Check If I Pressed My Button
-  myChangingColor, iPressedMyButton, lblButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton)
+  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker)
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
   
+  if iPressedMyButton:
+    if pathChecker != path:
+      coordinatesOfLayer = []
+
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
@@ -647,7 +652,10 @@ while run:
   # Call mouse Manager
   changeMyMouseLook()  
 
-  loopData = drawLine(coordinatesOfLayer, validState, loopData)
+  print(iPressedMyStopButton)
+
+  if not(iPressedMyStopButton):
+    loopData = drawLine(coordinatesOfLayer, validState, loopData)
 
   pygame.display.update() 
 

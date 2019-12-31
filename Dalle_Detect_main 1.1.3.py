@@ -23,7 +23,7 @@ dt = clock.tick(60)
 
 #LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
-theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = False
+theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = iPressedPartialButton = iPressedTotalButton = False
 doesMyFileExist = True
 validState = False
 
@@ -32,10 +32,9 @@ red = (208, 14, 14)
 black = (0, 0, 0)
 blue = (34,138,164)
 white = (255,255,255)
+otherWhite = whiteVisualiser = myChangingColor = stopButtonColor = partialButtonColor = totalButtonColor = (220, 220, 220)
 customBlack = (33,29,50)
 whiteBackground = (245, 245, 245)
-whiteVisualiser = (220, 220, 220)
-myChangingColor = stopButtonColor = whiteVisualiser
 
 #POSITION VAR
 pos = pos1 = 0, 0
@@ -51,6 +50,7 @@ yButton = 620
 xText = 150
 xStopButton = 50
 yStopButton = yButton
+
 
 #OTHER VAR
 user_input_value = ""
@@ -117,6 +117,7 @@ def drawVisualArea():
   pygame.draw.rect(ecran, stopButtonColor, (xStopButton, yStopButton, 140, 50))
   ecran.blit(lblStopButton, (xStopButton + 45, yStopButton + 10))
 
+
 # GRAPHIC : Print user key press and the path field
 def drawPathArea(user_input, xText, yText):
   pygame.draw.rect(ecran, whiteVisualiser, (xPathField,yPathField,210,23))
@@ -130,9 +131,11 @@ def drawPathArea(user_input, xText, yText):
     ecran.blit(temp, (0,0))
   return xText, yText, user_input
 
+
 # GRAPHIC
 def setBackgroundColor():
   ecran.fill(whiteBackground)
+
 
 # GRAPHIC
 def mouseOnFocus():
@@ -159,6 +162,7 @@ def mouseOnFocus():
       clickOnMe = True
       focus = False
     return clickOnMe, focus
+
 
 def unFocusFilePath(focus):
     if not(clickOnMe):
@@ -194,6 +198,7 @@ def unFocusFilePath(focus):
             iUsedCtrlA = False
     return focus
 
+
 def unFocusCtrlA(iUsedCtrlA, user_input):
   if iUsedCtrlA == True:
 
@@ -212,6 +217,7 @@ def unFocusCtrlA(iUsedCtrlA, user_input):
         user_input = font.render(user_input_value, True, black)
   return iUsedCtrlA, user_input
 
+
 # PROGRAM : Will take the text of the clipboard
 def getContentOfClipboard():
   try:
@@ -228,9 +234,11 @@ def getContentOfClipboard():
     pass
   return clipboard
 
+
 # PROGRAM : Will Put Text In The Clipboard
 def textInsertInClipboard():
   pygame.scrap.put()
+
 
 # GRAPHIC : Detect a CTRL + V or C
 def keyboardCommandDetection(user_input_value):
@@ -241,6 +249,7 @@ def keyboardCommandDetection(user_input_value):
       iUsedCtrlV = False
   return iUsedCtrlV, user_input_value
 
+
 # GRAPHIC : Detect a CTRL + A
 def selectAllText(user_input_value):
   if event.key == pygame.K_a and pygame.key.get_mods() & pygame.KMOD_CTRL:
@@ -250,6 +259,7 @@ def selectAllText(user_input_value):
     user_input_value = user_input_value
   return iUsedCtrlA, user_input_value
 
+
 # GRAPHIC : Replace cursor design.
 def changeMyMouseLook():
   if not(clickOnMe):
@@ -258,19 +268,73 @@ def changeMyMouseLook():
     if clickOnMe:
       ecran.blit(lblFindPath, (805, 20))
 
-def numberOfFPSArea():
-  ecran.blit(lblnumberOfFPS, (700, 300))
-  pygame.draw.rect(ecran, whiteVisualiser, (700, 350, 400, 7))
-  pygame.draw.rect(ecran, black, (700, 340, 9, 30))
+xPartialButton = 700
+yPartialButton = 170
+xTotalButton = 900
+yTotalButton = 170
 
+# GRAPHIC : Change Simulation Option (PARTIAL to TOTAL)
 def visualizeOptionArea():
+  
+    #TITLE
     ecran.blit(lblVisualizeParameter, (700, 130))
 
-    pygame.draw.rect(ecran, whiteVisualiser, (700, 170, 170, 40))
+    #PARTIAL
+      #Background
+    pygame.draw.rect(ecran, partialButtonColor, (xPartialButton, yPartialButton, 170, 40))
+      #Label
     ecran.blit(lblVisualizeParameterPartial, (760, 180))
 
-    pygame.draw.rect(ecran, whiteVisualiser, (900, 170, 170, 40))
+    #TOTAL
+      #Background
+    pygame.draw.rect(ecran, totalButtonColor, (xTotalButton, yTotalButton, 170, 40))
+      #Label
     ecran.blit(lblVisualizeParameterTotal, (960, 180))
+
+def clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton):
+    if clickOnMe:
+      if pygame.mouse.get_pressed() == (1,0,0):
+          if mousePos[0] > xTotalButton:
+            if mousePos[0] < xTotalButton + 170:
+              if mousePos[1] > yTotalButton:
+                if mousePos[1] < yTotalButton + 40:
+                  totalButtonColor = black
+                  lblVisualizeParameterTotal = font.render("Total", True, white)
+                  iPressedTotalButton = True
+                  iPressedPartialButton = False
+
+    if not(iPressedTotalButton):
+      lblVisualizeParameterTotal = font.render("Total", True, black)
+      totalButtonColor = otherWhite
+
+    return totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton
+
+
+def clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton):
+    if clickOnMe:
+      if pygame.mouse.get_pressed() == (1,0,0):
+          if mousePos[0] > xPartialButton:
+            if mousePos[0] < xPartialButton + 170:
+              if mousePos[1] > yPartialButton:
+                if mousePos[1] < yPartialButton + 40:
+                  partialButtonColor = black
+                  lblVisualizeParameterPartial = font.render(str("Partial"), True, white)
+                  iPressedPartialButton = True
+                  iPressedTotalButton = False
+
+    if not(iPressedPartialButton):
+      lblVisualizeParameterPartial = font.render("Partial", True, black)
+      partialButtonColor = otherWhite
+
+    return partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton
+
+# GRAPHIC : Change Speed Of Simulation
+def numberOfFPSArea():
+  ecran.blit(lblnumberOfFPS, (700, 300))
+  #INPUT BAR CONTROLLING
+  pygame.draw.rect(ecran, whiteVisualiser, (700, 350, 400, 7))
+  pygame.draw.rect(ecran, black, (850, 340, 9, 30))
+
 
 # GRAPHIC : Put a default label if nothing has been wrote 
 def itIsEmpty():
@@ -279,6 +343,7 @@ def itIsEmpty():
   else:
     theresSomething = False
   return theresSomething
+
 
 # Change his placement when press on search
 def replaceText(user_input, user_input_value):
@@ -300,6 +365,7 @@ def replaceText(user_input, user_input_value):
 def pathChecker(path):
   oldPath = path
   return path
+
 
 # Detect If User Click On Button "Calculate..."
 def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker, path):
@@ -327,6 +393,7 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMySt
 
     
   return myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker
+
 
 # Detect If User Click On Button "Stop..."
 def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
@@ -396,6 +463,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
     #-----------------------------------------
   return finalListOfData, doesMyFileExist
 
+
 def dataOfCoordinatesSorting(finalListOfData):
   count = 0
   for u in range(0, len(finalListOfData)):
@@ -426,6 +494,7 @@ def dataOfCoordinatesSorting(finalListOfData):
         count += 1
     except UnboundLocalError:
       break
+
 
 # PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
@@ -552,6 +621,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
   print(coordinatesOfLayer)
   return coordinatesOfLayer
 
+
 # Graphic Draw simulation line 
 def drawLine(coordinatesOfLayer, validState, loopData):
   firstPass = True
@@ -658,7 +728,6 @@ while run:
 
           dataOfCoordinatesSorting(finalListOfData)
 
-          ##if len(coordinatesOfLayer) == 0:
           coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 
           iPressedMyButton = False
@@ -666,7 +735,9 @@ while run:
   # Check If I Pressed My Button
   myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker, path)
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
-  
+  partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton = clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton) 
+  totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton = clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton)
+
   if iPressedMyButton:
     if pathChecker != path:
       coordinatesOfLayer = []

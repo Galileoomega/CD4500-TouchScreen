@@ -89,9 +89,13 @@ errorFont = pygame.font.Font('Resources\\OpenSans-Bold.ttf', 14)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
-lblLoading = waitFont.render(str("Wait..."), True, black)
+lblLoading = waitFont.render(str("WAIT..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 lblFindPath = font.render(str("Search..."), True, black)
+lblnumberOfFPS = font.render(str("PLAY SPEED"), True, black)
+lblVisualizeParameter = font.render(str("SIMULATION VIEW"), True, black)
+lblVisualizeParameterPartial = font.render(str("Partial"), True, black)
+lblVisualizeParameterTotal = font.render(str("Total"), True, black)
 lblButton = secondFont.render("Calculate... ", True, black)
 lblStopButton = secondFont.render("Stop... ", True, black)
 user_input = font.render(user_input_value, True, red)
@@ -208,7 +212,7 @@ def unFocusCtrlA(iUsedCtrlA, user_input):
         user_input = font.render(user_input_value, True, black)
   return iUsedCtrlA, user_input
 
-# GRAPHIC : Will take the text of the clipboard
+# PROGRAM : Will take the text of the clipboard
 def getContentOfClipboard():
   try:
     clipboard = pygame.scrap.get(pygame.SCRAP_TEXT)
@@ -224,7 +228,7 @@ def getContentOfClipboard():
     pass
   return clipboard
 
-# GRAPHIC : Will Put Text In The Clipboard
+# PROGRAM : Will Put Text In The Clipboard
 def textInsertInClipboard():
   pygame.scrap.put()
 
@@ -253,6 +257,20 @@ def changeMyMouseLook():
   if not(theresSomething):
     if clickOnMe:
       ecran.blit(lblFindPath, (805, 20))
+
+def numberOfFPSArea():
+  ecran.blit(lblnumberOfFPS, (700, 300))
+  pygame.draw.rect(ecran, whiteVisualiser, (700, 350, 400, 7))
+  pygame.draw.rect(ecran, black, (700, 340, 9, 30))
+
+def visualizeOptionArea():
+    ecran.blit(lblVisualizeParameter, (700, 130))
+
+    pygame.draw.rect(ecran, whiteVisualiser, (700, 170, 170, 40))
+    ecran.blit(lblVisualizeParameterPartial, (760, 180))
+
+    pygame.draw.rect(ecran, whiteVisualiser, (900, 170, 170, 40))
+    ecran.blit(lblVisualizeParameterTotal, (960, 180))
 
 # GRAPHIC : Put a default label if nothing has been wrote 
 def itIsEmpty():
@@ -429,7 +447,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
         if xAdded:
           if not(yAdded):
             coordinatesOfLayer.append(nextLineY)
-            
+
         xAdded = yAdded = False
 
         if not(firstPassOfX):
@@ -656,6 +674,8 @@ while run:
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
+  numberOfFPSArea()
+  visualizeOptionArea()
 
   # Draw the path area and the letter input
   xText, yText, user_input = drawPathArea(user_input, xText, yText)

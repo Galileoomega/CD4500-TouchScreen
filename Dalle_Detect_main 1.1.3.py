@@ -92,7 +92,8 @@ lblFindEvtest = font.render(str("File EVTEST :"), True, black)
 lblLoading = waitFont.render(str("WAIT..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 lblFindPath = font.render(str("Search..."), True, black)
-lblnumberOfFPS = font.render(str("PLAY SPEED"), True, black)
+lblPlaySpeed = font.render(str("PLAY SPEED"), True, black)
+lblNumberOfFps = font.render(str(numberOfFPS), True, black)
 lblVisualizeParameter = font.render(str("SIMULATION VIEW"), True, black)
 lblVisualizeParameterPartial = font.render(str("Partial"), True, black)
 lblVisualizeParameterTotal = font.render(str("Total"), True, black)
@@ -328,13 +329,22 @@ def clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisua
 
     return partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton
 
-# GRAPHIC : Change Speed Of Simulation
+# GRAPHIC : Show UI Element for the speed controller
 def numberOfFPSArea():
-  ecran.blit(lblnumberOfFPS, (700, 300))
+  ecran.blit(lblPlaySpeed, (700, 300))
+  ecran.blit(lblNumberOfFps, (1000, 300))
   #INPUT BAR CONTROLLING
   pygame.draw.rect(ecran, whiteVisualiser, (700, 350, 400, 7))
   pygame.draw.rect(ecran, black, (850, 340, 9, 30))
 
+  #NUMBER OF FPS
+  
+
+def moovingBarSpeed():
+  if clickOnMe:
+    if pygame.mouse.get_pressed() == (1,0,0):
+      if mousePos[0] > xPartialButton:
+        if mousePos[0] < xPartialButton
 
 # GRAPHIC : Put a default label if nothing has been wrote 
 def itIsEmpty():
@@ -745,7 +755,11 @@ while run:
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
-  numberOfFPSArea()
+
+  if iPressedPartialButton:
+    numberOfFPSArea()
+    moovingBarSpeed()
+
   visualizeOptionArea()
 
   # Draw the path area and the letter input

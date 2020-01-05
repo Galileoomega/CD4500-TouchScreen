@@ -19,13 +19,14 @@ pygame.scrap.init()
 #-----------VAR-----------
 #SETTING FPS
 clock = pygame.time.Clock()
-dt = clock.tick(60)
+dt = clock.tick(60.0)
 
 #LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
 theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = iPressedPartialButton = iPressedTotalButton = False
 doesMyFileExist = True
 validState = False
+moovingIsOk = False
 
 #COLOR VAR
 red = (208, 14, 14)
@@ -50,6 +51,8 @@ yButton = 620
 xText = 150
 xStopButton = 50
 yStopButton = yButton
+xSpeedBar = 850
+ySpeedBar = 340
 
 
 #OTHER VAR
@@ -93,7 +96,6 @@ lblLoading = waitFont.render(str("WAIT..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 lblFindPath = font.render(str("Search..."), True, black)
 lblPlaySpeed = font.render(str("PLAY SPEED"), True, black)
-lblNumberOfFps = font.render(str(numberOfFPS), True, black)
 lblVisualizeParameter = font.render(str("SIMULATION VIEW"), True, black)
 lblVisualizeParameterPartial = font.render(str("Partial"), True, black)
 lblVisualizeParameterTotal = font.render(str("Total"), True, black)
@@ -329,22 +331,46 @@ def clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisua
 
     return partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton
 
+
+
 # GRAPHIC : Show UI Element for the speed controller
 def numberOfFPSArea():
   ecran.blit(lblPlaySpeed, (700, 300))
   ecran.blit(lblNumberOfFps, (1000, 300))
   #INPUT BAR CONTROLLING
   pygame.draw.rect(ecran, whiteVisualiser, (700, 350, 400, 7))
-  pygame.draw.rect(ecran, black, (850, 340, 9, 30))
+  pygame.draw.rect(ecran, black, (xSpeedBar, ySpeedBar, 9, 30))
 
   #NUMBER OF FPS
   
 
-def moovingBarSpeed():
-  if clickOnMe:
-    if pygame.mouse.get_pressed() == (1,0,0):
-      if mousePos[0] > xPartialButton:
-        if mousePos[0] < xPartialButton
+def moovingBarSpeed(xSpeedBar, moovingIsOk, numberOfFPS):
+    if pygame.mouse.get_pressed() == (0,0,0):
+      moovingIsOk = False
+    if clickOnMe:
+      if pygame.mouse.get_pressed() == (1,0,0):
+          if mousePos[0] > xSpeedBar:
+            if mousePos[0] < xSpeedBar + 9:
+              if mousePos[1] > ySpeedBar:
+                if mousePos[1] < ySpeedBar + 30:
+                  moovingIsOk = True
+
+    try:    
+      if moovingIsOk:
+        xSpeedBar = mousePos[0]
+        
+    except UnboundLocalError:
+      pass
+    
+    if xSpeedBar < 700:
+      xSpeedBar = 700
+    if xSpeedBar > 1100:
+      xSpeedBar = 1100
+
+    numberOfFPS = (xSpeedBar / 2) - 330
+
+    return xSpeedBar, moovingIsOk, numberOfFPS
+
 
 # GRAPHIC : Put a default label if nothing has been wrote 
 def itIsEmpty():
@@ -676,8 +702,13 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 
 while run:
 
-  clock.tick(numberOfFPS)
+  lblNumberOfFps = font.render(str(numberOfFPS), True, black)
+
+  # Getting mouse position
   mousePos = pygame.mouse.get_pos()
+
+  # Number of FPS
+  clock.tick(numberOfFPS)
 
   # Get what you have in your clipboard
   clipboard = getContentOfClipboard()
@@ -758,7 +789,7 @@ while run:
 
   if iPressedPartialButton:
     numberOfFPSArea()
-    moovingBarSpeed()
+    xSpeedBar, moovingIsOk, numberOfFPS = moovingBarSpeed(xSpeedBar, moovingIsOk, numberOfFPS)
 
   visualizeOptionArea()
 

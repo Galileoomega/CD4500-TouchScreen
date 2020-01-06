@@ -60,6 +60,7 @@ user_input_value = ""
 path = ""
   # Cursor look
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
+RESIZE_CURSOR = pygame.image.load('Resources\\resizeCursor.png').convert_alpha()
 blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
 
@@ -265,11 +266,14 @@ def selectAllText(user_input_value):
 
 # GRAPHIC : Replace cursor design.
 def changeMyMouseLook():
+  if moovingIsOk:
+    ecran.blit(RESIZE_CURSOR, (xMouse - 8, yMouse)) 
   if not(clickOnMe):
-    ecran.blit(MANUAL_CURSOR, ( pygame.mouse.get_pos() ) ) 
+    ecran.blit(MANUAL_CURSOR, (pygame.mouse.get_pos())) 
   if not(theresSomething):
     if clickOnMe:
       ecran.blit(lblFindPath, (805, 20))
+
 
 xPartialButton = 700
 yPartialButton = 170
@@ -343,22 +347,26 @@ def numberOfFPSArea():
 
   #NUMBER OF FPS
   
-
+# CONTROLLER : Bound the UI bar with the nulber of fps
 def moovingBarSpeed(xSpeedBar, moovingIsOk, numberOfFPS):
     if pygame.mouse.get_pressed() == (0,0,0):
       moovingIsOk = False
+
     if clickOnMe:
       if pygame.mouse.get_pressed() == (1,0,0):
-          if mousePos[0] > xSpeedBar:
+          if mousePos[0] > xSpeedBar - 3:
             if mousePos[0] < xSpeedBar + 9:
               if mousePos[1] > ySpeedBar:
                 if mousePos[1] < ySpeedBar + 30:
                   moovingIsOk = True
-
+    
     try:    
       if moovingIsOk:
-        xSpeedBar = mousePos[0]
-        
+        xSpeedBar = mousePos[0] 
+        pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+      else:
+        pygame.mouse.set_cursor((16, 16), (0, 0), (0, 0, 64, 0, 96, 0, 112, 0, 120, 0, 124, 0, 126, 0, 127, 0, 127, 128, 124, 0, 108, 0, 70, 0, 6, 0, 3, 0, 3, 0, 0, 0),
+          (192, 0, 224, 0, 240, 0, 248, 0, 252, 0, 254, 0, 255, 0, 255, 128, 255, 192, 255, 224, 254, 0, 239, 0, 207, 0, 135, 128, 7, 128, 3, 0))
     except UnboundLocalError:
       pass
     
@@ -706,6 +714,7 @@ while run:
 
   # Getting mouse position
   mousePos = pygame.mouse.get_pos()
+  xMouse, yMouse = pygame.mouse.get_pos()
 
   # Number of FPS
   clock.tick(numberOfFPS)

@@ -23,8 +23,10 @@ dt = clock.tick(60.0)
 
 #LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
-theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = iPressedPartialButton = iPressedTotalButton = False
+theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = iPressedTotalButton = False
 doesMyFileExist = True
+iPressedPartialButton = True
+iChangedMyPath = False
 validState = False
 moovingIsOk = False
 
@@ -306,10 +308,12 @@ def clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizePa
             if mousePos[0] < xTotalButton + 170:
               if mousePos[1] > yTotalButton:
                 if mousePos[1] < yTotalButton + 40:
-                  totalButtonColor = black
-                  lblVisualizeParameterTotal = font.render("Total", True, white)
                   iPressedTotalButton = True
                   iPressedPartialButton = False
+
+    if iPressedTotalButton:
+      totalButtonColor = black
+      lblVisualizeParameterTotal = font.render("Total", True, white)
 
     if not(iPressedTotalButton):
       lblVisualizeParameterTotal = font.render("Total", True, black)
@@ -325,17 +329,18 @@ def clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisua
             if mousePos[0] < xPartialButton + 170:
               if mousePos[1] > yPartialButton:
                 if mousePos[1] < yPartialButton + 40:
-                  partialButtonColor = black
-                  lblVisualizeParameterPartial = font.render(str("Partial"), True, white)
                   iPressedPartialButton = True
                   iPressedTotalButton = False
+
+    if iPressedPartialButton:
+      partialButtonColor = black
+      lblVisualizeParameterPartial = font.render(str("Partial"), True, white)
 
     if not(iPressedPartialButton):
       lblVisualizeParameterPartial = font.render("Partial", True, black)
       partialButtonColor = otherWhite
 
     return partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton
-
 
 
 # GRAPHIC : Show UI Element for the speed controller
@@ -406,14 +411,20 @@ def replaceText(user_input, user_input_value):
   return xText, yText, user_input
 
 
-# MAYBE TO DELETE ???? AND HIS CHILD
-def pathChecker(path):
-  oldPath = path
-  return path
+# PROGRAM: Will look if the user changed the path
+def pathChecker(path, iChangedMyPath, oldPath):
+  
+  if oldPath != path:
+    iChangedMyPath = True
+  else:
+    oldPath = path
+    iChangedMyPath = False
+  
+  return path, iChangedMyPath, oldPath
 
 
 # Detect If User Click On Button "Calculate..."
-def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker, path):
+def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton):
   if clickOnMe:
     if pygame.mouse.get_pressed() == (1,0,0):
         if mousePos[0] > xButton:
@@ -425,8 +436,6 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMySt
                 iPressedMyButton = True
                 iPressedMyStopButton = False
 
-                pathChecker(path)
-
     else:
       myChangingColor = (220,220,220)
       iPressedMyButton = False
@@ -435,9 +444,8 @@ def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMySt
     myChangingColor = (220,220,220)
     iPressedMyButton = False
     lblButton = secondFont.render("Calculate... ", True, black)
-
-    
-  return myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker
+  
+  return myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton
 
 
 # Detect If User Click On Button "Stop..."
@@ -551,6 +559,8 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
   lineX = lineY = count = 0
   nextLineX = nextLineY = -1
 
+  print(finalListOfData)
+
   for u in range(count, len(finalListOfData)):
     needToExit = False
     # Detect if Press or Release.
@@ -560,7 +570,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
         count +=1
         if xAdded:
           if not(yAdded):
-            coordinatesOfLayer.append(nextLineY)
+            coordinatesOfLayer.append(nextLineY * 2)
 
         xAdded = yAdded = False
 
@@ -568,8 +578,8 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
           if not(firstPassOfY):
             if nextLineX == lineX:
               if nextLineY == lineY:
-                coordinatesOfLayer.append(lineX)
-                coordinatesOfLayer.append(lineY)
+                coordinatesOfLayer.append(lineX * 2)
+                coordinatesOfLayer.append(lineY * 2)
 
         lineY = 0
         iHaveMyNextDataX = iHaveMyNextDataY = False
@@ -603,7 +613,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
           if iHaveMyNextDataX:
             if not(yAdded):
               if xAdded:
-                coordinatesOfLayer.append(nextLineY)
+                coordinatesOfLayer.append(nextLineY * 2)
                 yAdded = True
                 needToExit = True
                 count -= 2
@@ -613,16 +623,16 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
             if firstPassOfX:
               lineX = finalListOfData[count]
               nextLineX = lineX
-              coordinatesOfLayer.append(lineX)
+              coordinatesOfLayer.append(lineX * 2)
               firstPassOfX = False
             else:
               nextLineX = finalListOfData[count]
               if xAdded:
-                coordinatesOfLayer.append(nextLineX)
+                coordinatesOfLayer.append(nextLineX * 2)
               iHaveMyNextDataX = True
         else:
           if lineX != 0:
-            coordinatesOfLayer.append(lineX)
+            coordinatesOfLayer.append(lineX * 2)
             xAdded = True
         
 
@@ -631,7 +641,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
           count += 1
 
           if not(xAdded):
-              coordinatesOfLayer.append(nextLineX)
+              coordinatesOfLayer.append(nextLineX * 2)
               xAdded = True
 
           yAdded = True
@@ -639,15 +649,15 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
           if firstPassOfY:
             lineY = finalListOfData[count]
             nextLineY = lineY
-            coordinatesOfLayer.append(lineY)
+            coordinatesOfLayer.append(lineY * 2)
             firstPassOfY = False
           else:
             nextLineY = finalListOfData[count]
-            coordinatesOfLayer.append(nextLineY)
+            coordinatesOfLayer.append(nextLineY * 2)
             iHaveMyNextDataY = True
         else:
           if lineY != 0:
-            coordinatesOfLayer.append(lineY)
+            coordinatesOfLayer.append(lineY * 2)
             yAdded = True
 
 
@@ -663,7 +673,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
       pass
     count += 1
 
-  print(coordinatesOfLayer)
+  
   return coordinatesOfLayer
 
 
@@ -701,7 +711,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
     except IndexError:
       loopData = 0
 
-    pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 3)
+    pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
     loopData += 2
 
@@ -711,18 +721,20 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 
 while run:
 
+  # NEED To reset the FPS Label
   lblNumberOfFps = font.render(str(myTempSpeed), True, black)
 
   # Getting mouse position
   mousePos = pygame.mouse.get_pos()
   xMouse, yMouse = pygame.mouse.get_pos()
 
-  # Number of FPS
+  # Set the FPS
   clock.tick(numberOfFPS)
 
   # Get what you have in your clipboard
   clipboard = getContentOfClipboard()
 
+  # Know If the user is into the dark field (Path Input)
   focus = unFocusFilePath(focus)
 
   if iUsedCtrlA:
@@ -733,6 +745,7 @@ while run:
     if event.type == pygame.QUIT:
       run = False
 
+    # KEYBOARD INTERACTION
     elif not(clickOnMe):
       if event.type == pygame.KEYDOWN:
 
@@ -784,19 +797,25 @@ while run:
           iPressedMyButton = False
 
   # Check If I Pressed My Button
-  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, pathChecker, path)
+  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
   partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton = clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton) 
   totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton = clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton)
-
+  
+  # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
   if iPressedMyButton:
-    if pathChecker != path:
+    if len(coordinatesOfLayer) > 1:
+      path, iChangedMyPath, oldPath = pathChecker(path, iChangedMyPath, oldPath)
+    else:
+      oldPath = path
+    if iChangedMyPath:
       coordinatesOfLayer = []
 
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
 
+  # FPS MANAGEMENT
   if iPressedPartialButton:
     numberOfFPSArea()
     xSpeedBar, moovingIsOk, myTempSpeed = moovingBarSpeed(xSpeedBar, moovingIsOk, myTempSpeed)

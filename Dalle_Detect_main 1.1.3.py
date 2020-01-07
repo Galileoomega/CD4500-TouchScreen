@@ -53,6 +53,7 @@ xStopButton = 50
 yStopButton = yButton
 xSpeedBar = 850
 ySpeedBar = 340
+myTempSpeed = 0
 
 
 #OTHER VAR
@@ -348,7 +349,7 @@ def numberOfFPSArea():
   #NUMBER OF FPS
   
 # CONTROLLER : Bound the UI bar with the nulber of fps
-def moovingBarSpeed(xSpeedBar, moovingIsOk, numberOfFPS):
+def moovingBarSpeed(xSpeedBar, moovingIsOk, myTempSpeed):
     if pygame.mouse.get_pressed() == (0,0,0):
       moovingIsOk = False
 
@@ -375,9 +376,9 @@ def moovingBarSpeed(xSpeedBar, moovingIsOk, numberOfFPS):
     if xSpeedBar > 1100:
       xSpeedBar = 1100
 
-    numberOfFPS = (xSpeedBar / 2) - 330
+    myTempSpeed = (xSpeedBar / 2) - 330
 
-    return xSpeedBar, moovingIsOk, numberOfFPS
+    return xSpeedBar, moovingIsOk, myTempSpeed
 
 
 # GRAPHIC : Put a default label if nothing has been wrote 
@@ -700,7 +701,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
     except IndexError:
       loopData = 0
 
-    pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
+    pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 3)
 
     loopData += 2
 
@@ -710,7 +711,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 
 while run:
 
-  lblNumberOfFps = font.render(str(numberOfFPS), True, black)
+  lblNumberOfFps = font.render(str(myTempSpeed), True, black)
 
   # Getting mouse position
   mousePos = pygame.mouse.get_pos()
@@ -798,9 +799,21 @@ while run:
 
   if iPressedPartialButton:
     numberOfFPSArea()
-    xSpeedBar, moovingIsOk, numberOfFPS = moovingBarSpeed(xSpeedBar, moovingIsOk, numberOfFPS)
+    xSpeedBar, moovingIsOk, myTempSpeed = moovingBarSpeed(xSpeedBar, moovingIsOk, myTempSpeed)
+    if not(focus):
+      numberOfFPS = myTempSpeed
+    else:
+      numberOfFPS = 60
 
+  else:
+    numberOfFPS = 60
+
+  # UI Component (Total/Partial)
   visualizeOptionArea()
+
+  if not(iPressedMyStopButton):
+    loopData = drawLine(coordinatesOfLayer, validState, loopData)
+
 
   # Draw the path area and the letter input
   xText, yText, user_input = drawPathArea(user_input, xText, yText)
@@ -830,8 +843,6 @@ while run:
   # Call mouse Manager
   changeMyMouseLook()  
 
-  if not(iPressedMyStopButton):
-    loopData = drawLine(coordinatesOfLayer, validState, loopData)
 
   pygame.display.update() 
 

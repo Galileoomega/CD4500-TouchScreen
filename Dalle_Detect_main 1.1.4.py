@@ -1,10 +1,10 @@
 ##============================================================ 
 ##===        Visualise the touch of the CD4500 screen
 ##===                       
-##===                         v1.1.3
+##===                         v1.1.4
 ##============================================================ 
 
-import pygame, os, re, time
+import pygame, os, re, time, line_directive, appender
 #os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
 ##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
@@ -14,6 +14,8 @@ pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser")
 pygame.scrap.init()
+f=open("line_directive.py", "w+")
+f2=open("appender.py", "w+")
 
 
 #-----------VAR-----------
@@ -81,6 +83,8 @@ coordinatesOfLayer = [int]
 coordinatesOfLayer.pop(0)
 releaseSeparator = 111111
 oldPath = ""
+
+max47Code = 0
 
 numberOfFPS = 60
 
@@ -472,6 +476,8 @@ def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
 
 
 def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
+  code47List = []
+
   try:
     myFile = open(path, "r")
     doesMyFileExist = True
@@ -503,6 +509,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
       u = re.sub("code | value| alue", "", u)
       finalListOfData += re.split("\s", u)
     index = -1
+
     #finalListOfData.pop(0)
     for u in range(0, len(finalListOfData)):
       index += 2
@@ -514,8 +521,59 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
       except IndexError:
         pass
 
+    # Detect how many finger have been pressed together.
+    for u in range(0, len(finalListOfData)):
+      if finalListOfData[u] == "47":
+        code47List.append(finalListOfData[u + 1])
+    try:
+      max47Code = max(code47List) + 1
+    except ValueError:
+      max47Code = 0
+
+    print(max47Code, " finger pressed simultaneously")
+
+
+    # WIPING LIST ##############################################################
+    if max47Code > 1:
+      
+      # FIRST FILE
+      for i in range(0, max47Code):
+        f.write("myList" + str(i) + " = []\n") 
+      f.write("def strangerList():" + "\n") 
+      for i in range(0, max47Code):
+        f.write("\tglobal myList" + str(i) + "\n") 
+      f.close()
+
+      # SECOND FILE
+      f2.write("import line_directive\n" + "\n" + "def addData():\n")
+
+      for u in range(0, len(finalListOfData)):
+
+        if finalListOfData[count] == "47":
+          count += 2
+          number = finalListOfData[count - 1]
+          try:
+            while finalListOfData[count] != "47":
+              f2.write("\tline_directive.myList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
+              print(number, finalListOfData[count])
+              count += 1  
+          except IndexError:
+            break
+                    
+        else:
+          count += 1
+
+      f2.write("\treturn line_directive.myList0") 
+      for u in range(1, max47Code):
+        f2.write(", line_directive.myList" + str(u))
+
+      myList0, myList1 = appender.addData()
+      #TypeError: Cannot Unpack non-iterable NoneType object
+
+      f2.close() 
+
     #-----------------------------------------
-  return finalListOfData, doesMyFileExist
+  return finalListOfData, doesMyFileExist, max47Code
 
 
 def dataOfCoordinatesSorting(finalListOfData):
@@ -553,12 +611,15 @@ def dataOfCoordinatesSorting(finalListOfData):
 # PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
-  press = yAdded = xAdded = False
   firstPassOfX = firstPassOfY = True
   iHaveMyNextDataX = iHaveMyNextDataY = False
+  press = yAdded = xAdded = False
 
   lineX = lineY = count = 0
   nextLineX = nextLineY = -1
+
+  print(finalListOfData)
+  
 
   for u in range(count, len(finalListOfData)):
     needToExit = False
@@ -581,7 +642,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
                 coordinatesOfLayer.append(lineY * 2)
 
         lineY = 0
-        iHaveMyNextDataX = iHaveMyNextDataY = False
+        iHaveMyNextDataX = iHaveMyNextDataY = False  
 
         # Press
         if finalListOfData[count] >= 0:
@@ -672,6 +733,8 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
       pass
     count += 1
 
+  print(coordinatesOfLayer)
+
   return coordinatesOfLayer
 
 
@@ -718,6 +781,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
         except IndexError:
           loopData = 0
 
+        # BUILDER
         pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
         loopData += 2
@@ -783,29 +847,28 @@ while run:
   #Detect when mouse is on a text field
   if focus == False:
     clickOnMe, focus = mouseOnFocus()
-
-  # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
+  
   if iPressedMyButton:
+
+    # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
     if len(coordinatesOfLayer) > 1:
       path, iChangedMyPath, oldPath = pathChecker(path, iChangedMyPath, oldPath)
     else:
       oldPath = path
     if iChangedMyPath:
       coordinatesOfLayer = []
-  
-  if iPressedMyButton:
 
     path = user_input_value
 
     # Put double Backslash for searching the file
     path = re.sub("[\"]", "", path)
 
-    finalListOfData, doesMyFileExist = fileOpenning(part1, finalListOfData, count, doesMyFileExist)
+    finalListOfData, doesMyFileExist, max47Code = fileOpenning(part1, finalListOfData, count, doesMyFileExist)
 
     if doesMyFileExist:
         if iPressedMyButton:
 
-          dataOfCoordinatesSorting(finalListOfData)
+          ######dataOfCoordinatesSorting(finalListOfData)
 
           coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 

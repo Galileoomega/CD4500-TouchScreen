@@ -4,7 +4,7 @@
 ##===                         v1.1.4
 ##============================================================ 
 
-import pygame, os, re, time, line_directive, appender
+import pygame, os, re, time, line_directive, appender, writecontroller
 #os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
 ##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
@@ -14,8 +14,9 @@ pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser")
 pygame.scrap.init()
-f=open("line_directive.py", "w+")
-f2=open("appender.py", "w+")
+f = open("line_directive.py", "w+")
+fAppender = open("appender.py", "w+")
+fWriteController = open("writecontroller.py", "w+")
 
 
 #-----------VAR-----------
@@ -532,8 +533,9 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
 
     print(max47Code, " finger pressed simultaneously")
 
+    #global finalListOfData
 
-    # WIPING LIST ##############################################################
+    # WIPING LIST
     if max47Code > 1:
       
       # FIRST FILE
@@ -545,32 +547,38 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
       f.close()
 
       # SECOND FILE
-      f2.write("import line_directive\n" + "\n" + "def addData():\n")
+      fAppender.write("import line_directive\n" + "\n" + "def addData():\n")
 
       for u in range(0, len(finalListOfData)):
-
         if finalListOfData[count] == "47":
           count += 2
           number = finalListOfData[count - 1]
           try:
             while finalListOfData[count] != "47":
-              f2.write("\tline_directive.myList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
+              fAppender.write("\tline_directive.myList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
               print(number, finalListOfData[count])
               count += 1  
           except IndexError:
             break
-                    
+                      
         else:
           count += 1
 
-      f2.write("\treturn line_directive.myList0") 
+      fAppender.write("\treturn line_directive.myList0") 
       for u in range(1, max47Code):
-        f2.write(", line_directive.myList" + str(u))
+        fAppender.write(", line_directive.myList" + str(u))
 
-      myList0, myList1 = appender.addData()
+      # WriteController
+      fWriteController.write("import appender\n" + "\n")
+      fWriteController.write("appender.addData()")
+      #for u in range(1, max47Code):
+
+      #myList0, myList1 = appender.addData()
       #TypeError: Cannot Unpack non-iterable NoneType object
 
-      f2.close() 
+      f.close() 
+      fAppender.close()
+      fWriteController.close()
 
     #-----------------------------------------
   return finalListOfData, doesMyFileExist, max47Code

@@ -560,8 +560,6 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
   lineX = lineY = count = 0
   nextLineX = nextLineY = -1
 
-  print(finalListOfData)
-
   for u in range(count, len(finalListOfData)):
     needToExit = False
     # Detect if Press or Release.
@@ -674,50 +672,57 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
       pass
     count += 1
 
-  
   return coordinatesOfLayer
 
 
 # Graphic Draw simulation line 
 def drawLine(coordinatesOfLayer, validState, loopData):
-  firstPass = True
-  try:
-    lala = coordinatesOfLayer[loopData + 3]
-    validState = True
-  except IndexError:
-    loopData = 0
-    validState = False
+    
+    # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
+    if iPressedTotalButton:
+      makeAFor = len(coordinatesOfLayer)
+    else:
+      makeAFor = 1
 
-  if validState:
-    try:
-      if coordinatesOfLayer[loopData + 4] == releaseSeparator:
-        if firstPass:
-          firstPass = False
-        else:
-          loopData += 3
+    for u in range(0, makeAFor):
+      firstPass = True
       try:
         lala = coordinatesOfLayer[loopData + 3]
+        validState = True
       except IndexError:
         loopData = 0
-    except IndexError:
-      loopData = 0
+        validState = False
 
-    startx = coordinatesOfLayer[loopData]
-    starty = coordinatesOfLayer[loopData + 1]
-    endx = coordinatesOfLayer[loopData + 2]
-    endy = coordinatesOfLayer[loopData + 3]
-    try:
-      if coordinatesOfLayer[loopData + 4] == releaseSeparator:
-        loopData += 3
-    except IndexError:
-      loopData = 0
+      if validState:
+        try:
+          if coordinatesOfLayer[loopData + 4] == releaseSeparator:
+            if firstPass:
+              firstPass = False
+            else:
+              loopData += 3
+          try:
+            lala = coordinatesOfLayer[loopData + 3]
+          except IndexError:
+            loopData = 0
+        except IndexError:
+          loopData = 0
 
-    pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
+        startx = coordinatesOfLayer[loopData]
+        starty = coordinatesOfLayer[loopData + 1]
+        endx = coordinatesOfLayer[loopData + 2]
+        endy = coordinatesOfLayer[loopData + 3]
 
-    loopData += 2
+        try:
+          if coordinatesOfLayer[loopData + 4] == releaseSeparator:
+            loopData += 3
+        except IndexError:
+          loopData = 0
 
-  return loopData
+        pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
+        loopData += 2
+
+    return loopData
 #--------------------------------
 
 while run:
@@ -778,6 +783,15 @@ while run:
   #Detect when mouse is on a text field
   if focus == False:
     clickOnMe, focus = mouseOnFocus()
+
+  # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
+  if iPressedMyButton:
+    if len(coordinatesOfLayer) > 1:
+      path, iChangedMyPath, oldPath = pathChecker(path, iChangedMyPath, oldPath)
+    else:
+      oldPath = path
+    if iChangedMyPath:
+      coordinatesOfLayer = []
   
   if iPressedMyButton:
 
@@ -803,14 +817,6 @@ while run:
   partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton = clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton) 
   totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton = clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton)
   
-  # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
-  if iPressedMyButton:
-    if len(coordinatesOfLayer) > 1:
-      path, iChangedMyPath, oldPath = pathChecker(path, iChangedMyPath, oldPath)
-    else:
-      oldPath = path
-    if iChangedMyPath:
-      coordinatesOfLayer = []
 
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()

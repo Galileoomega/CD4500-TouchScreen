@@ -1,0 +1,1 @@
+Event: time 1578469123.248680, type 3 (EV_ABS), code 47 (ABS_MT_SLOT), value 0

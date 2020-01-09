@@ -4,7 +4,7 @@
 ##===                         v1.1.4
 ##============================================================ 
 
-import pygame, os, re, time, line_directive, appender, writecontroller, whereToDraw
+import pygame, os, re, time
 #os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
 ##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
@@ -14,11 +14,6 @@ pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser")
 pygame.scrap.init()
-f = open("line_directive.py", "w+")
-fAppender = open("appender.py", "w+")
-fWriteController = open("writecontroller.py", "w+")
-fWhereToDraw = open("whereToDraw.py", "a+")
-
 
 #-----------VAR-----------
 #SETTING FPS
@@ -429,6 +424,7 @@ def pathChecker(path, iChangedMyPath, oldPath):
   
   if oldPath != path:
     iChangedMyPath = True
+    #oldPath = path
   else:
     oldPath = path
     iChangedMyPath = False
@@ -548,7 +544,15 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
 
     # WIPING LIST WITH FILE
     if max47Code > 1:
-      if not(pathHasChanged):
+      if not(pathHasChanged):    
+        #open('appender.py', 'w').close()
+        #open('writecontroller.py', 'w').close()
+        #open('line_directive.py', 'w').close()    
+
+        f = open("line_directive.py", "w+")
+        fAppender = open("appender.py", "w+")
+        fWriteController = open("writecontroller.py", "w+")
+        fWhereToDraw = open("whereToDraw.py", "a+")
       
         # FIRST FILE
         for i in range(0, max47Code):
@@ -589,25 +593,36 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
         f.close() 
         fAppender.close()
         fWriteController.close()
-        #open('appender.py', 'w').close()
+        
+        import line_directive, appender, writecontroller, whereToDraw
 
         tempLists = []
 
         for u in range(0, max47Code):
-          tempLists.append(writecontroller.giveList(u))
+          data = writecontroller.giveList(u)
+          tempLists.append(data)
+        
+        del line_directive, appender, writecontroller, whereToDraw
         
         print(tempLists)
+      #else:
+        #open('appender.py', 'w').close()
+        #open('writecontroller.py', 'w').close()
+        #open('line_directive.py', 'w').close()
     
       iAmOnMultipleTouch = True
     else:
       iAmOnMultipleTouch = False
 
     #-----------------------------------------
+  
   return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch
 
 count = 0
 
 def writingMultipleLines(count, max47Code, tempLists, validState, justToCatchError):
+  
+  import line_directive, appender, writecontroller, whereToDraw
   
   for u in range(count, max47Code):
     myFinalList = whereToDraw.lineBuild(tempLists[u])
@@ -619,6 +634,8 @@ def writingMultipleLines(count, max47Code, tempLists, validState, justToCatchErr
     myFinalList = []
   else:
     pass
+
+  del line_directive, appender, writecontroller, whereToDraw
 
   return count, myFinalList, justToCatchError
 
@@ -836,6 +853,8 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 
 while run:
 
+  print(pathHasChanged)
+
   # NEED To reset the FPS Label
   lblNumberOfFps = font.render(str(myTempSpeed), True, black)
 
@@ -903,7 +922,10 @@ while run:
     if iChangedMyPath:
       coordinatesOfLayer = []
       myFinalList = []
+      oldPath = path
       pathHasChanged = True
+    else:
+      pathHasChanged = False
 
     path = user_input_value
 

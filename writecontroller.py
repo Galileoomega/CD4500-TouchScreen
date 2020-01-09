@@ -1,3 +1,0 @@
-import appender
-
-appender.addData()

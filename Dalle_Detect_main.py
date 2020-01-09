@@ -89,6 +89,7 @@ oldPath = ""
 myFinalList = []
 max47Code = 0
 tempLists = []
+perkCount = 0
 
 numberOfFPS = 60
 
@@ -480,7 +481,7 @@ def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
   return stopButtonColor, iPressedMyStopButton, lblStopButton
 
 
-def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists):
+def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists, perkCount):
   code47List = []
 
   # Try to open the file, if it cannot an error is show
@@ -545,25 +546,31 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
     # WIPING LIST WITH FILE
     if max47Code > 1:
       if not(pathHasChanged):    
-        #open('appender.py', 'w').close()
-        #open('writecontroller.py', 'w').close()
-        #open('line_directive.py', 'w').close()    
+
+        open('appender.py', 'w').close()
+
+        perkCount = 0 
 
         f = open("line_directive.py", "w+")
         fAppender = open("appender.py", "w+")
         fWriteController = open("writecontroller.py", "w+")
         fWhereToDraw = open("whereToDraw.py", "a+")
       
-        # FIRST FILE
-        for i in range(0, max47Code):
-          f.write("myList" + str(i) + " = []\n") 
-        f.write("def strangerList():" + "\n") 
-        for i in range(0, max47Code):
-          f.write("\tglobal myList" + str(i) + "\n") 
-        f.close()
-
+      
         # SECOND FILE
-        fAppender.write("import line_directive\n" + "\n" + "def addData():\n")
+        
+
+        fAppender.write("def init():" + "\n") 
+        for i in range(0, max47Code):
+          fAppender.write("\tglobal myList" + str(i) + "\n") 
+        for i in range(0, max47Code):
+          fAppender.write("\tmyList" + str(i) + " = []\n") 
+        fAppender.write("\tprint(myList0)" + "\n") 
+        fAppender.write("\treturn myList0") 
+        for i in range(1, max47Code):
+          fAppender.write(", myList" + str(i))
+        
+        fAppender.write("\ndef addData():\n" + "\timport line_directive\n")
 
         for u in range(0, len(finalListOfData)):
           if finalListOfData[count] == "47":
@@ -571,7 +578,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
             number = finalListOfData[count - 1]
             try:
               while finalListOfData[count] != "47":
-                fAppender.write("\tline_directive.myList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
+                fAppender.write("\tmyList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
                 print(number, finalListOfData[count])
                 count += 1  
             except IndexError:
@@ -580,21 +587,28 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
           else:
             count += 1
 
-        fAppender.write("\treturn line_directive.myList0") 
+        fAppender.write("\treturn myList0") 
         for u in range(1, max47Code):
-          fAppender.write(", line_directive.myList" + str(u))
+          fAppender.write(", myList" + str(u))
 
         # THIRD FILE
-        fWriteController.write("import appender\n" + "\n" + "def giveList(index):\n")
-        fWriteController.write("\tmyLists = []" + "\n")
+        fWriteController.write("def giveList(index):\n")
+        fWriteController.write("\timport appender\n" + "\tmyLists = []" + "\n")
         fWriteController.write("\tmyLists = appender.addData()" + "\n")
         fWriteController.write("\treturn myLists[index]")
+
+        # Ce fichier ne vois pas le modification faites. Des que ce fichier se lance, il voit les anciennes versions
+        # des fichier voulus ex:(appender.py)
         
-        f.close() 
+        f.close()
         fAppender.close()
         fWriteController.close()
         
-        import line_directive, appender, writecontroller, whereToDraw
+        import writecontroller, appender, line_directive
+
+        appender.init()
+
+        appender.addData()
 
         tempLists = []
 
@@ -602,7 +616,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
           data = writecontroller.giveList(u)
           tempLists.append(data)
         
-        del line_directive, appender, writecontroller, whereToDraw
+        del writecontroller, appender, line_directive
         
         print(tempLists)
       #else:
@@ -616,17 +630,16 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
 
     #-----------------------------------------
   
-  return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch
+  return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount
 
-count = 0
 
-def writingMultipleLines(count, max47Code, tempLists, validState, justToCatchError):
+def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError):
   
-  import line_directive, appender, writecontroller, whereToDraw
+  import whereToDraw
   
-  for u in range(count, max47Code):
+  for u in range(perkCount, max47Code):
     myFinalList = whereToDraw.lineBuild(tempLists[u])
-    count += 1
+    perkCount += 1
     justToCatchError = False
     break
   
@@ -635,9 +648,9 @@ def writingMultipleLines(count, max47Code, tempLists, validState, justToCatchErr
   else:
     pass
 
-  del line_directive, appender, writecontroller, whereToDraw
+  del whereToDraw
 
-  return count, myFinalList, justToCatchError
+  return perkCount, myFinalList, justToCatchError
 
 # AWAITING TO DELETE !!!!
 def dataOfCoordinatesSorting(finalListOfData):
@@ -932,7 +945,7 @@ while run:
     # Put double Backslash for searching the file
     path = re.sub("[\"]", "", path)
 
-    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists)
+    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists, perkCount)
 
     if doesMyFileExist:
         if iPressedMyButton:
@@ -969,7 +982,7 @@ while run:
   # UI Component (Total/Partial)
   visualizeOptionArea()
   try:
-    count, myFinalList, justToCatchError = writingMultipleLines(count, max47Code, tempLists, validState, justToCatchError)
+    perkCount, myFinalList, justToCatchError = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError)
   except UnboundLocalError:
     pass
 

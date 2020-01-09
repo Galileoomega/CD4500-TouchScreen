@@ -4,7 +4,7 @@
 ##===                         v1.1.4
 ##============================================================ 
 
-import pygame, os, re, time, line_directive, appender, writecontroller
+import pygame, os, re, time, line_directive, appender, writecontroller, whereToDraw
 #os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
 ##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
 del os
@@ -17,6 +17,7 @@ pygame.scrap.init()
 f = open("line_directive.py", "w+")
 fAppender = open("appender.py", "w+")
 fWriteController = open("writecontroller.py", "w+")
+fWhereToDraw = open("whereToDraw.py", "a+")
 
 
 #-----------VAR-----------
@@ -26,12 +27,15 @@ dt = clock.tick(60.0)
 
 #LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
+justToCatchError = True
 theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = iPressedTotalButton = False
 doesMyFileExist = True
 iPressedPartialButton = True
 iChangedMyPath = False
 validState = False
+pathHasChanged = False
 moovingIsOk = False
+iAmOnMultipleTouch = False
 
 #COLOR VAR
 red = (208, 14, 14)
@@ -64,11 +68,14 @@ myTempSpeed = 0
 #OTHER VAR
 user_input_value = ""
 path = ""
-  # Cursor look
+
+# MEDIA IMAGE
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
 RESIZE_CURSOR = pygame.image.load('Resources\\resizeCursor.png').convert_alpha()
 blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
+greyCross = pygame.image.load('Resources\\cross.png').convert_alpha()
+greyCross = pygame.transform.scale(greyCross, (80,80))
 
 location = (0,0)
 x = location[0]
@@ -84,8 +91,9 @@ coordinatesOfLayer = [int]
 coordinatesOfLayer.pop(0)
 releaseSeparator = 111111
 oldPath = ""
-
+myFinalList = []
 max47Code = 0
+tempLists = []
 
 numberOfFPS = 60
 
@@ -476,9 +484,10 @@ def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
   return stopButtonColor, iPressedMyStopButton, lblStopButton
 
 
-def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
+def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists):
   code47List = []
 
+  # Try to open the file, if it cannot an error is show
   try:
     myFile = open(path, "r")
     doesMyFileExist = True
@@ -490,6 +499,8 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
   except OSError:
     print("Error... Unable to find the file")
     doesMyFileExist = False
+    max47Code = 0
+    iAmOnMultipleTouch = False
 
   if doesMyFileExist:
     
@@ -535,55 +546,83 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist):
 
     #global finalListOfData
 
-    # WIPING LIST
+    # WIPING LIST WITH FILE
     if max47Code > 1:
+      if not(pathHasChanged):
       
-      # FIRST FILE
-      for i in range(0, max47Code):
-        f.write("myList" + str(i) + " = []\n") 
-      f.write("def strangerList():" + "\n") 
-      for i in range(0, max47Code):
-        f.write("\tglobal myList" + str(i) + "\n") 
-      f.close()
+        # FIRST FILE
+        for i in range(0, max47Code):
+          f.write("myList" + str(i) + " = []\n") 
+        f.write("def strangerList():" + "\n") 
+        for i in range(0, max47Code):
+          f.write("\tglobal myList" + str(i) + "\n") 
+        f.close()
 
-      # SECOND FILE
-      fAppender.write("import line_directive\n" + "\n" + "def addData():\n")
+        # SECOND FILE
+        fAppender.write("import line_directive\n" + "\n" + "def addData():\n")
 
-      for u in range(0, len(finalListOfData)):
-        if finalListOfData[count] == "47":
-          count += 2
-          number = finalListOfData[count - 1]
-          try:
-            while finalListOfData[count] != "47":
-              fAppender.write("\tline_directive.myList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
-              print(number, finalListOfData[count])
-              count += 1  
-          except IndexError:
-            break
-                      
-        else:
-          count += 1
+        for u in range(0, len(finalListOfData)):
+          if finalListOfData[count] == "47":
+            count += 2
+            number = finalListOfData[count - 1]
+            try:
+              while finalListOfData[count] != "47":
+                fAppender.write("\tline_directive.myList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
+                print(number, finalListOfData[count])
+                count += 1  
+            except IndexError:
+              break
+                        
+          else:
+            count += 1
 
-      fAppender.write("\treturn line_directive.myList0") 
-      for u in range(1, max47Code):
-        fAppender.write(", line_directive.myList" + str(u))
+        fAppender.write("\treturn line_directive.myList0") 
+        for u in range(1, max47Code):
+          fAppender.write(", line_directive.myList" + str(u))
 
-      # WriteController
-      fWriteController.write("import appender\n" + "\n")
-      fWriteController.write("appender.addData()")
-      #for u in range(1, max47Code):
+        # THIRD FILE
+        fWriteController.write("import appender\n" + "\n" + "def giveList(index):\n")
+        fWriteController.write("\tmyLists = []" + "\n")
+        fWriteController.write("\tmyLists = appender.addData()" + "\n")
+        fWriteController.write("\treturn myLists[index]")
+        
+        f.close() 
+        fAppender.close()
+        fWriteController.close()
+        #open('appender.py', 'w').close()
 
-      #myList0, myList1 = appender.addData()
-      #TypeError: Cannot Unpack non-iterable NoneType object
+        tempLists = []
 
-      f.close() 
-      fAppender.close()
-      fWriteController.close()
+        for u in range(0, max47Code):
+          tempLists.append(writecontroller.giveList(u))
+        
+        print(tempLists)
+    
+      iAmOnMultipleTouch = True
+    else:
+      iAmOnMultipleTouch = False
 
     #-----------------------------------------
-  return finalListOfData, doesMyFileExist, max47Code
+  return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch
 
+count = 0
 
+def writingMultipleLines(count, max47Code, tempLists, validState, justToCatchError):
+  
+  for u in range(count, max47Code):
+    myFinalList = whereToDraw.lineBuild(tempLists[u])
+    count += 1
+    justToCatchError = False
+    break
+  
+  if justToCatchError:
+    myFinalList = []
+  else:
+    pass
+
+  return count, myFinalList, justToCatchError
+
+# AWAITING TO DELETE !!!!
 def dataOfCoordinatesSorting(finalListOfData):
   count = 0
   for u in range(0, len(finalListOfData)):
@@ -605,10 +644,8 @@ def dataOfCoordinatesSorting(finalListOfData):
       if fingerPress:
         count += 1
         if finalListOfData[count] == '53':
-          print("Pos X : ",finalListOfData[count + 1])
           count += 1
         if finalListOfData[count] == '54':
-          print("Pos Y : ", finalListOfData[count + 1])
           count += 1
       else:
         count += 1
@@ -731,12 +768,12 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
         if not(iHaveMyNextDataY):
           if not(iHaveMyNextDataX):
-                try:     
-                  pass       
-                  lineX = nextLineX
-                  lineY = nextLineY
-                except UnboundLocalError:
-                  pass
+            try:     
+              pass       
+              lineX = nextLineX
+              lineY = nextLineY
+            except UnboundLocalError:
+              pass
     else:
       pass
     count += 1
@@ -865,18 +902,20 @@ while run:
       oldPath = path
     if iChangedMyPath:
       coordinatesOfLayer = []
+      myFinalList = []
+      pathHasChanged = True
 
     path = user_input_value
 
     # Put double Backslash for searching the file
     path = re.sub("[\"]", "", path)
 
-    finalListOfData, doesMyFileExist, max47Code = fileOpenning(part1, finalListOfData, count, doesMyFileExist)
+    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists)
 
     if doesMyFileExist:
         if iPressedMyButton:
 
-          ######dataOfCoordinatesSorting(finalListOfData)
+          dataOfCoordinatesSorting(finalListOfData)
 
           coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 
@@ -907,16 +946,29 @@ while run:
 
   # UI Component (Total/Partial)
   visualizeOptionArea()
+  try:
+    count, myFinalList, justToCatchError = writingMultipleLines(count, max47Code, tempLists, validState, justToCatchError)
+  except UnboundLocalError:
+    pass
 
-  if not(iPressedMyStopButton):
-    loopData = drawLine(coordinatesOfLayer, validState, loopData)
+  if not(iPressedMyStopButton):  
+    if iAmOnMultipleTouch == False:
+      loopData = drawLine(coordinatesOfLayer, validState, loopData)
+    else:
+      loopData = drawLine(myFinalList, validState, loopData)
 
-
-  # Draw the path area and the letter input
-  xText, yText, user_input = drawPathArea(user_input, xText, yText)
-  
   # Draw a label "EV Test :"
   ecran.blit(lblFindEvtest, (700, 20))
+
+  # Show an error when the file cannot be found
+  if not(doesMyFileExist):
+    # Show ERROR Label
+    ecran.blit(lblFileError, (xPathField, yPathField + 25))
+    # Show grey Cross Image
+    ecran.blit(greyCross, (250, 220))
+  
+  # Draw the PATH AREA and the letter input
+  xText, yText, user_input = drawPathArea(user_input, xText, yText)
 
   # Write what the user is typping
   if iUsedCtrlA:
@@ -933,13 +985,8 @@ while run:
       # Show a wait label
       ecran.blit(lblLoading, (300,300))
 
-  if not(doesMyFileExist):
-    # Show an error when the file cannot be found
-    ecran.blit(lblFileError, (xPathField, yPathField + 25))
-
   # Call mouse Manager
   changeMyMouseLook()  
-
 
   pygame.display.update() 
 

@@ -48,15 +48,13 @@ widthInput = 860
 posXInput = 180
 posYInput = yText = 300
 xButton = 1000
-loopData = countOf = 0
+loopData = countOf = myTempSpeed = 0
 yButton = 620
 xText = 150
 xStopButton = 50
 yStopButton = yButton
 xSpeedBar = 850
 ySpeedBar = 340
-myTempSpeed = 0
-
 
 #OTHER VAR
 user_input_value = ""
@@ -247,6 +245,10 @@ def getContentOfClipboard():
     clipboard = clipboard[:-1]
   except TypeError:
     pass
+
+  if len(clipboard) > 400:
+    clipboard = ""
+    print("Error : Invalid Clipoard")
   return clipboard
 
 
@@ -865,7 +867,10 @@ while run:
             user_input_value = ""
           user_input_value = user_input_value[:-1]
         else:
-          user_input = font.render(user_input_value, True, black)
+          try:
+            user_input = font.render(user_input_value, True, black)
+          except pygame.error as message:
+            user_input = ""
 
   theresSomething = itIsEmpty()
 

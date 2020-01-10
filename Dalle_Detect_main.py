@@ -806,7 +806,10 @@ def drawLine(coordinatesOfLayer, validState, loopData):
           loopData = 0
 
         # BUILDER
-        pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
+        if iPressedPartialButton:
+          pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 5)
+        else:
+          pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
 
         loopData += 2
 

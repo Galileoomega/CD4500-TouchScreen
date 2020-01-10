@@ -542,6 +542,10 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
     if max47Code > 1:
       if not(pathHasChanged):    
 
+        if finalListOfData[0] != "47":
+          finalListOfData.insert(0, "47")
+          finalListOfData.insert(1, 0)
+
         myFinalList = []
         tempLists = []
 
@@ -549,10 +553,9 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
         open('writecontroller.py', 'w').close()
 
         perkCount = 0 
-        
+
         fWriteController = open("writecontroller.py", "w+")
         fWhereToDraw = open("whereToDraw.py", "a+")
-      
       
         # BUILD THE FIRST FILE (appender.py)
         with open("appender.py", "w+") as fAppender:
@@ -584,8 +587,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
         fWriteController.write("\tmyLists = appender.addData()" + "\n")
         fWriteController.write("\tprint(\"MY SIZEEE\", myLists[index])\n")
         fWriteController.write("\treturn myLists[index]")
-        
-        f.close()
+
         fWriteController.close()
 
         tempLists = []
@@ -634,37 +636,6 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
   del whereToDraw
 
   return perkCount, myFinalList, justToCatchError, myDunnoList
-
-# AWAITING TO DELETE !!!!
-def dataOfCoordinatesSorting(finalListOfData):
-  count = 0
-  for u in range(0, len(finalListOfData)):
-    #Detect if Press or Release.
-    try:
-      if finalListOfData[count] == "57":
-        count += 1
-        if finalListOfData[count] >= 0:
-          fingerPress = True
-          print("Press")
-        else:
-          fingerPress = False
-          print("Released")
-    except IndexError:
-      fingerPress = False
-      break
-
-    try:
-      if fingerPress:
-        count += 1
-        if finalListOfData[count] == '53':
-          count += 1
-        if finalListOfData[count] == '54':
-          count += 1
-      else:
-        count += 1
-    except UnboundLocalError:
-      break
-
 
 # PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
@@ -925,8 +896,6 @@ while run:
 
     if doesMyFileExist:
         if iPressedMyButton:
-
-          #dataOfCoordinatesSorting(finalListOfData)
 
           if not(iAmOnMultipleTouch):
             coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)

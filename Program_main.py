@@ -245,10 +245,13 @@ def getContentOfClipboard():
     clipboard = clipboard[:-1]
   except TypeError:
     pass
-
-  if len(clipboard) > 400:
-    clipboard = ""
-    print("Error : Invalid Clipoard")
+  
+  try:
+    if len(clipboard) > 400:
+      clipboard = ""
+      print("Error : Invalid Clipoard")
+  except TypeError:
+    pass 
   return clipboard
 
 

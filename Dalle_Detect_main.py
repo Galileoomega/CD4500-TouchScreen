@@ -7,7 +7,7 @@
 import pygame, os, re, time
 from importlib import reload
 
-#INITIALISATION
+# INITIALISATION
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser")

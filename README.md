@@ -1,7 +1,7 @@
 # CD4500-TouchScreen
 
 For input path navigation you can't use keyboard arrow or mouse.
-But CTRL + A is still available.
+But CTRL + A and CTRL + V are still available.
 
 Do not press enter or any other command in this input.
 

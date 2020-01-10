@@ -88,6 +88,7 @@ myFinalList = []
 max47Code = 0
 tempLists = []
 perkCount = 0
+myDunnoList = []
 
 numberOfFPS = 60
 
@@ -541,7 +542,6 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
     if max47Code > 1:
       if not(pathHasChanged):    
 
-        coordinatesOfLayer = []
         myFinalList = []
         tempLists = []
 
@@ -594,6 +594,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
         with open("writecontroller.py", "r") as file:
           import writecontroller
           for u in range(0, max47Code):
+            writecontroller = reload(writecontroller)
             data = writecontroller.giveList(u)
             tempLists.append(data)
           del writecontroller
@@ -607,12 +608,22 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
   return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount
 
 
-def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError):
+def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
   
   import whereToDraw
+
+  if iPressedMyButton:
+    if perkCount == max47Code:
+        myFinalList = []
   
   for u in range(perkCount, max47Code):
-    myFinalList = whereToDraw.lineBuild(tempLists[u])
+    
+    lala = perkCount
+    try:
+      myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList)
+    except UnboundLocalError:
+      myDunnoList = []
+      myFinalList = whereToDraw.lineBuild(tempLists[u], myDunnoList)
     perkCount += 1
     justToCatchError = False
     break
@@ -624,7 +635,7 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
 
   del whereToDraw
 
-  return perkCount, myFinalList, justToCatchError
+  return perkCount, myFinalList, justToCatchError, myDunnoList
 
 # AWAITING TO DELETE !!!!
 def dataOfCoordinatesSorting(finalListOfData):
@@ -951,8 +962,9 @@ while run:
   visualizeOptionArea()
 
   try:
-    perkCount, myFinalList, justToCatchError = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError)
+    perkCount, myFinalList, justToCatchError, myDunnoList = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
   except UnboundLocalError:
+    # local variable "myFinalList" referenced before assignement
     pass
 
   if not(iPressedMyStopButton):  

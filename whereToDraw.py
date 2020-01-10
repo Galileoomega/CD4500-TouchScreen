@@ -1,9 +1,13 @@
 import appender
+from importlib import reload
+
+appender = reload(appender)
 
 releaseSeparator = 111111
 myFinalList = []
 
-def lineBuild(myList):
+def lineBuild(myList, myFinalList):
+
   if myList[1] >= 0:
     for u in range(0, len(myList)):
       myList[u] = (str(myList[u]))
@@ -27,8 +31,6 @@ def lineBuild(myList):
 
   lineX = lineY = count = 0
   nextLineX = nextLineY = -1
-
-  print(myList)
   
 
   for u in range(count, len(myList)):
@@ -143,6 +145,5 @@ def lineBuild(myList):
       pass
     count += 1
 
-  print(myFinalList)
 
   return myFinalList

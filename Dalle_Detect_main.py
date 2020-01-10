@@ -616,7 +616,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
           data = writecontroller.giveList(u)
           tempLists.append(data)
         
-        del writecontroller, appender, line_directive
+        #del writecontroller, appender, line_directive
         
         print(tempLists)
       #else:

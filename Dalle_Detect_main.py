@@ -5,9 +5,7 @@
 ##============================================================ 
 
 import pygame, os, re, time
-#os.chdir("C:\\Users\\alimacher\\Desktop\\Work\\1ere annee\\Python\\PyGame\\Dalle_Detect")
-##os.chdir("C:\\Users\\alexi\\Desktop\\GIT\\CD4500-TouchScreen-1")
-del os
+from importlib import reload
 
 #INITIALISATION
 pygame.init()
@@ -539,91 +537,67 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
     except ValueError:
       max47Code = 0
 
-    print(max47Code, " finger pressed simultaneously")
-
-    #global finalListOfData
-
     # WIPING LIST WITH FILE
     if max47Code > 1:
       if not(pathHasChanged):    
 
+        coordinatesOfLayer = []
+        myFinalList = []
+        tempLists = []
+
         open('appender.py', 'w').close()
+        open('writecontroller.py', 'w').close()
+        open('line_directive.py', 'w').close()
 
         perkCount = 0 
 
         f = open("line_directive.py", "w+")
-        fAppender = open("appender.py", "w+")
         fWriteController = open("writecontroller.py", "w+")
         fWhereToDraw = open("whereToDraw.py", "a+")
       
       
-        # SECOND FILE
-        
+        # BUILD THE FIRST FILE (appender.py)
+        with open("appender.py", "w+") as fAppender:
+          fAppender.write("def addData():\n")
+          for u in range(0, max47Code):
+            fAppender.write("\tmyList" + str(u) + " = []\n")  
+          for u in range(0, len(finalListOfData)):
+            if finalListOfData[count] == "47":
+              count += 2
+              number = finalListOfData[count - 1]
+              try:
+                while finalListOfData[count] != "47":
+                  fAppender.write("\tmyList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
+                  count += 1  
+              except IndexError:
+                break     
+            else:
+              count += 1
+          fAppender.write("\treturn myList0") 
+          for u in range(1, max47Code):
+            fAppender.write(", myList" + str(u))
 
-        fAppender.write("def init():" + "\n") 
-        for i in range(0, max47Code):
-          fAppender.write("\tglobal myList" + str(i) + "\n") 
-        for i in range(0, max47Code):
-          fAppender.write("\tmyList" + str(i) + " = []\n") 
-        fAppender.write("\tprint(myList0)" + "\n") 
-        fAppender.write("\treturn myList0") 
-        for i in range(1, max47Code):
-          fAppender.write(", myList" + str(i))
-        
-        fAppender.write("\ndef addData():\n" + "\timport line_directive\n")
-
-        for u in range(0, len(finalListOfData)):
-          if finalListOfData[count] == "47":
-            count += 2
-            number = finalListOfData[count - 1]
-            try:
-              while finalListOfData[count] != "47":
-                fAppender.write("\tmyList" + str(number) + ".append(" + str(finalListOfData[count]) + ")\n")
-                print(number, finalListOfData[count])
-                count += 1  
-            except IndexError:
-              break
-                        
-          else:
-            count += 1
-
-        fAppender.write("\treturn myList0") 
-        for u in range(1, max47Code):
-          fAppender.write(", myList" + str(u))
-
-        # THIRD FILE
+        #BUILD THE SECOND FILE (writecontroller.py)
+        fWriteController.write("from importlib import reload\n")
         fWriteController.write("def giveList(index):\n")
         fWriteController.write("\timport appender\n" + "\tmyLists = []" + "\n")
+        fWriteController.write("\tappender = reload(appender)\n")
+        
         fWriteController.write("\tmyLists = appender.addData()" + "\n")
+        fWriteController.write("\tprint(\"MY SIZEEE\", myLists[index])\n")
         fWriteController.write("\treturn myLists[index]")
-
-        # Ce fichier ne vois pas le modification faites. Des que ce fichier se lance, il voit les anciennes versions
-        # des fichier voulus ex:(appender.py)
         
         f.close()
-        fAppender.close()
         fWriteController.close()
-        
-        import writecontroller, appender, line_directive
-
-        appender.init()
-
-        appender.addData()
 
         tempLists = []
-
-        for u in range(0, max47Code):
-          data = writecontroller.giveList(u)
-          tempLists.append(data)
-        
-        #del writecontroller, appender, line_directive
-        
-        print(tempLists)
-      #else:
-        #open('appender.py', 'w').close()
-        #open('writecontroller.py', 'w').close()
-        #open('line_directive.py', 'w').close()
-    
+        with open("writecontroller.py", "r") as file:
+          import writecontroller
+          for u in range(0, max47Code):
+            data = writecontroller.giveList(u)
+            tempLists.append(data)
+          del writecontroller
+            
       iAmOnMultipleTouch = True
     else:
       iAmOnMultipleTouch = False
@@ -691,10 +665,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
   press = yAdded = xAdded = False
 
   lineX = lineY = count = 0
-  nextLineX = nextLineY = -1
-
-  print(finalListOfData)
-  
+  nextLineX = nextLineY = -1  
 
   for u in range(count, len(finalListOfData)):
     needToExit = False
@@ -808,8 +779,6 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
       pass
     count += 1
 
-  print(coordinatesOfLayer)
-
   return coordinatesOfLayer
 
 
@@ -865,8 +834,6 @@ def drawLine(coordinatesOfLayer, validState, loopData):
 #--------------------------------
 
 while run:
-
-  print(pathHasChanged)
 
   # NEED To reset the FPS Label
   lblNumberOfFps = font.render(str(myTempSpeed), True, black)
@@ -950,9 +917,10 @@ while run:
     if doesMyFileExist:
         if iPressedMyButton:
 
-          dataOfCoordinatesSorting(finalListOfData)
+          #dataOfCoordinatesSorting(finalListOfData)
 
-          coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
+          if not(iAmOnMultipleTouch):
+            coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 
           iPressedMyButton = False
 
@@ -981,6 +949,7 @@ while run:
 
   # UI Component (Total/Partial)
   visualizeOptionArea()
+
   try:
     perkCount, myFinalList, justToCatchError = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError)
   except UnboundLocalError:

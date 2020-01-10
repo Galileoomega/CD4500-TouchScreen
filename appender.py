@@ -1,12 +1,6 @@
-def init():
-	global myList0
-	global myList1
+def addData():
 	myList0 = []
 	myList1 = []
-	print(myList0)
-	return myList0, myList1
-def addData():
-	import line_directive
 	myList0.append(57)
 	myList0.append(12129)
 	myList0.append(53)

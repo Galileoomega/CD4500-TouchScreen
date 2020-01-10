@@ -608,7 +608,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
   return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount
 
 
-def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
+def writingMultipleLines(perkCount, max47Code, tempLists, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
   
   import whereToDraw
 
@@ -617,8 +617,6 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
         myFinalList = []
   
   for u in range(perkCount, max47Code):
-    
-    lala = perkCount
     try:
       myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList)
     except UnboundLocalError:
@@ -874,6 +872,8 @@ while run:
   #Detect when mouse is on a text field
   if focus == False:
     clickOnMe, focus = mouseOnFocus()
+
+  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
   
   if iPressedMyButton:
 
@@ -886,7 +886,7 @@ while run:
       coordinatesOfLayer = []
       myFinalList = []
       oldPath = path
-      pathHasChanged = True
+      #pathHasChanged = True
     else:
       pathHasChanged = False
 
@@ -906,7 +906,7 @@ while run:
           iPressedMyButton = False
 
   # Check If I Pressed My Button
-  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
+  
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
   partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton = clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton) 
   totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton = clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton)
@@ -932,10 +932,16 @@ while run:
   visualizeOptionArea()
 
   try:
-    perkCount, myFinalList, justToCatchError, myDunnoList = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
-  except UnboundLocalError:
-    # local variable "myFinalList" referenced before assignement
-    pass
+    checker = finalListOfData[0]
+  except IndexError:
+    checker = 0
+
+  if checker == "47":
+    try:
+      perkCount, myFinalList, justToCatchError, myDunnoList = writingMultipleLines(perkCount, max47Code, tempLists, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
+    except UnboundLocalError:
+      # local variable "myFinalList" referenced before assignement
+      pass
 
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:

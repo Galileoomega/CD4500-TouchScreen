@@ -3,4 +3,8 @@
 For input path navigation you can't use keyboard arrow or mouse.
 But CTRL + A is still available.
 
-Multiple touch is not supported on the 1.1.4.
+Do not press enter or any other command in this input.
+
+Multiple touch is supported but only for 2 finger max !
+
+If you want to simulate multiple touch, you'll need to simulate those file FIRST. If you do not the soft will need a restart.

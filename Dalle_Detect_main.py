@@ -547,11 +547,9 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
 
         open('appender.py', 'w').close()
         open('writecontroller.py', 'w').close()
-        open('line_directive.py', 'w').close()
 
         perkCount = 0 
-
-        f = open("line_directive.py", "w+")
+        
         fWriteController = open("writecontroller.py", "w+")
         fWhereToDraw = open("whereToDraw.py", "a+")
       

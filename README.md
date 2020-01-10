@@ -7,4 +7,4 @@ Do not press enter or any other command in this input.
 
 Multiple touch is supported but only for 2 finger max !
 
-If you want to simulate multiple touch, you'll need to simulate those file FIRST. If you do not the soft will need a restart.
+If you want to simulate multiple touch, you'll need to play those file FIRST. If you do not the soft will need a restart.

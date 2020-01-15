@@ -11,6 +11,7 @@ from importlib import reload
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser v1.1.5")
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.scrap.init()
 
 #-----------VAR-----------

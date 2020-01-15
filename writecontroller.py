@@ -4,5 +4,4 @@ def giveList(index):
 	myLists = []
 	appender = reload(appender)
 	myLists = appender.addData()
-	print("MY SIZEEE", myLists[index])
 	return myLists[index]

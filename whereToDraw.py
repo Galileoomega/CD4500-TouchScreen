@@ -1,3 +1,6 @@
+# THIS CONTROLLER CONTAIN A MARSHAL
+# Related to v1.1.5
+
 import appender
 from importlib import reload
 
@@ -8,13 +11,15 @@ myFinalList = []
 
 def lineBuild(myList, myFinalList):
 
+  marshallLineX = 0
+  marshallLineY = 0
+  goodNumberMarshall = 0
+
   if myList[1] >= 0:
     for u in range(0, len(myList)):
       myList[u] = (str(myList[u]))
 
     index = -1
-    print("MY ENTRY ::::", myList)
-
     for u in range(0, len(myList)):
         index += 2
         try:
@@ -43,6 +48,7 @@ def lineBuild(myList, myFinalList):
         if xAdded:
           if not(yAdded):
             myFinalList.append(nextLineY * 2)
+            goodNumberMarshall += 1
 
         xAdded = yAdded = False
 
@@ -52,19 +58,42 @@ def lineBuild(myList, myFinalList):
               if nextLineY == lineY:
                 myFinalList.append(lineX * 2)
                 myFinalList.append(lineY * 2)
+                goodNumberMarshall += 2
 
-        lineY = 0
+        
         iHaveMyNextDataX = iHaveMyNextDataY = False  
 
-        # Press
+        # IF Code 57 is POSITIVE (PUSHED)
         if myList[count] >= 0:
           press = True
           count += 1
-        # Release
+        # IF Code 57 is NEGATIVE (RELEASED)
         else:
           firstPassOfX = firstPassOfY = True
           press = False
+          if (goodNumberMarshall % 4) != 0:
+              if lineY != 0:
+                if lineX != 0:
+                  myFinalList.append(lineX * 2)
+                  myFinalList.append(lineY * 2)
+                  goodNumberMarshall +=2
+
+              elif marshallLineX != 0:
+                if marshallLineY != 0:
+                  myFinalList.append(marshallLineX * 2)
+                  myFinalList.append(marshallLineY * 2)
+                  goodNumberMarshall +=2
+
+              else:
+                myFinalList.append(nextLineX * 2)
+                myFinalList.append(nextLineY * 2)
+                goodNumberMarshall +=2
+
           myFinalList.append(releaseSeparator)
+          goodNumberMarshall = 0
+
+        marshallLineY = lineY
+        lineY = 0
       
     except IndexError:
       break
@@ -74,10 +103,13 @@ def lineBuild(myList, myFinalList):
         xAdded = yAdded = False
         firstPassOfX = firstPassOfY = False
     
-    lineY = 0
-    lineX = 0
+    marshallLineX = lineX
+    marshallLineY = lineY
 
     if press == True:
+        
+        lineY = 0
+        lineX = 0
         # If its a X position
         if myList[count] == "53":
           count += 1
@@ -86,6 +118,8 @@ def lineBuild(myList, myFinalList):
             if not(yAdded):
               if xAdded:
                 myFinalList.append(nextLineY * 2)
+                goodNumberMarshall += 1
+
                 yAdded = True
                 needToExit = True
                 count -= 2
@@ -94,17 +128,25 @@ def lineBuild(myList, myFinalList):
           if not(needToExit):
             if firstPassOfX:
               lineX = myList[count]
+              marshallLineX = lineX
+
               nextLineX = lineX
               myFinalList.append(lineX * 2)
+              goodNumberMarshall += 1
+
               firstPassOfX = False
             else:
               nextLineX = myList[count]
               if xAdded:
                 myFinalList.append(nextLineX * 2)
+                goodNumberMarshall += 1
+
               iHaveMyNextDataX = True
         else:
           if lineX != 0:
             myFinalList.append(lineX * 2)
+            goodNumberMarshall += 1
+
             xAdded = True
         
 
@@ -114,22 +156,32 @@ def lineBuild(myList, myFinalList):
 
           if not(xAdded):
               myFinalList.append(nextLineX * 2)
+              goodNumberMarshall += 1
+
               xAdded = True
 
           yAdded = True
 
           if firstPassOfY:
             lineY = myList[count]
+            marshallLineY = lineY
+
             nextLineY = lineY
             myFinalList.append(lineY * 2)
+            goodNumberMarshall += 1
+
             firstPassOfY = False
           else:
             nextLineY = myList[count]
             myFinalList.append(nextLineY * 2)
+            goodNumberMarshall += 1
+
             iHaveMyNextDataY = True
         else:
           if lineY != 0:
             myFinalList.append(lineY * 2)
+            goodNumberMarshall += 1
+
             yAdded = True
 
 
@@ -141,9 +193,17 @@ def lineBuild(myList, myFinalList):
                   lineY = nextLineY
                 except UnboundLocalError:
                   pass
+    if lineX != 0:
+      if lineY != 0:
+        marshallLineX = lineX
+        marshallLineY = lineY
     else:
       pass
     count += 1
 
+  print(myFinalList)
+
+  marshallLineX = 0
+  marshallLineY = 0
 
   return myFinalList

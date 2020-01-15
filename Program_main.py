@@ -625,6 +625,8 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
   for u in range(perkCount, max47Code):
     try:
       myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList)
+    except IndexError:
+      pass
     except UnboundLocalError:
       myDunnoList = []
       myFinalList = whereToDraw.lineBuild(tempLists[u], myDunnoList)
@@ -909,6 +911,8 @@ while run:
     if doesMyFileExist:
         if iPressedMyButton:
 
+          perkCount = -1
+
           if not(iAmOnMultipleTouch):
             coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 
@@ -951,6 +955,12 @@ while run:
       loopData = drawLine(coordinatesOfLayer, validState, loopData)
     else:
       loopData = drawLine(myFinalList, validState, loopData)
+
+  if iPressedMyStopButton:
+    tempLists = []
+    myFinalList = []
+    open('appender.py', 'w').close()
+    open('writecontroller.py', 'w').close()
 
   # Draw a label "EV Test :"
   ecran.blit(lblFindEvtest, (700, 20))

@@ -188,7 +188,6 @@ def lineBuild(myList, myFinalList):
 
             yAdded = True
 
-
         if not(iHaveMyNextDataY):
           if not(iHaveMyNextDataX):
                 try:     
@@ -205,9 +204,14 @@ def lineBuild(myList, myFinalList):
       pass
     count += 1
 
-  print(myFinalList)
-
   marshallLineX = 0
   marshallLineY = 0
+
+  # FOR DEBUG
+  #f = open("output.txt", "w+")
+  #for u in myFinalList:
+  #  f.write(str(u) + "\n")
+
+  #f.close()
 
   return myFinalList

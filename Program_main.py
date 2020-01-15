@@ -623,8 +623,6 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
         myFinalList = []
   
   for u in range(perkCount, max47Code):
-    
-    lala = perkCount
     try:
       myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList)
     except UnboundLocalError:

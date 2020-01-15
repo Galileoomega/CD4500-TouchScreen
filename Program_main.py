@@ -590,7 +590,6 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
         fWriteController.write("\tappender = reload(appender)\n")
         
         fWriteController.write("\tmyLists = appender.addData()" + "\n")
-        fWriteController.write("\tprint(\"MY SIZEEE\", myLists[index])\n")
         fWriteController.write("\treturn myLists[index]")
 
         fWriteController.close()
@@ -939,12 +938,7 @@ while run:
   # UI Component (Total/Partial)
   visualizeOptionArea()
 
-  try:
-    checker = finalListOfData[0]
-  except IndexError:
-    checker = 0
-
-  if checker == "47":
+  if iAmOnMultipleTouch:
     try:
       perkCount, myFinalList, justToCatchError, myDunnoList = writingMultipleLines(perkCount, max47Code, tempLists, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
     except UnboundLocalError:

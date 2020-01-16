@@ -1,7 +1,7 @@
 ##============================================================ 
 ##===        Visualise the touch of the CD4500 screen
 ##===                       
-##===                         v1.1.8
+##===                         v1.1.9
 ##============================================================ 
 
 import pygame, os, re, time
@@ -10,7 +10,7 @@ from importlib import reload
 # INITIALISATION
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
-pygame.display.set_caption("Screen touch Visualiser v1.1.8")
+pygame.display.set_caption("Screen touch Visualiser v1.1.9")
 pygame.scrap.init()
 
 # -----------VAR-----------
@@ -41,6 +41,11 @@ red = (208, 14, 14)
 black = (53, 50, 55)
 blue = (34,138,164)
 white = (255,255,255)
+green = (14, 208, 14)
+purple = (152, 3, 252)
+orange = (252, 115, 3)
+cyan = (3, 252, 240)
+
 otherWhite = whiteVisualiser = myChangingColor = stopButtonColor = partialButtonColor = totalButtonColor = (220, 220, 220)
 screenShotButtonColor = whiteVisualiser
 singleColor = whiteVisualiser
@@ -49,6 +54,15 @@ customWhite = (180, 180, 180)
 customBlack = (33,29,50)
   # Color of the background
 whiteBackground = (250, 250, 250)
+
+color0 = red
+color1 = blue
+color2 = green
+color3 = purple
+color4 = orange
+color5 = cyan
+
+lineColor = red
 
 #POSITION VAR
 pos = pos1 = 0, 0
@@ -839,12 +853,25 @@ def drawLine(coordinatesOfLayer, validState, loopData):
             loopData += 3
         except IndexError:
           loopData = 0
+        
+        if perkCount == 0:
+          lineColor = color0
+        elif perkCount == 1:
+          lineColor = color1
+        elif perkCount == 2:
+          lineColor = color2
+        elif perkCount == 3:
+          lineColor = color3
+        elif perkCount == 4:
+          lineColor = color4
+        elif perkCount == 5:
+          lineColor = color5
 
         # BUILDER
         if iPressedPartialButton:
-          pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 5)
+          pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 5)
         else:
-          pygame.draw.line(ecran, red, (startx, starty), (endx, endy), 4)
+          pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 4)
 
         loopData += 2
 
@@ -936,7 +963,6 @@ while run:
         iHaveMyFile = True
     for i in myFileName[-1]:
       finalFileName = myFileName[::-1]
-    print(finalFileName)
     # ------------------------------------
 
     # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)

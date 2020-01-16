@@ -10,7 +10,7 @@ from importlib import reload
 # INITIALISATION
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
-pygame.display.set_caption("Screen touch Visualiser v1.1.6")
+pygame.display.set_caption("Screen touch Visualiser v1.1.7")
 pygame.scrap.init()
 
 # -----------VAR-----------

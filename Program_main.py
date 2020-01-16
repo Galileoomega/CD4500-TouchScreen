@@ -14,24 +14,27 @@ pygame.display.set_caption("Screen touch Visualiser v1.1.6")
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.scrap.init()
 
-#-----------VAR-----------
-#SETTING FPS
+# -----------VAR-----------
+# SETTING FPS
 clock = pygame.time.Clock()
 dt = clock.tick(60.0)
 
-#LOOP VAR
+# LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
-justToCatchError = True
-theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iPressedMyButton = iPressedMyStopButton = iPressedTotalButton = False
+theresSomething = focus = iUsedCtrlV = iUsedCtrlA = False
 doesMyFileExist = True
-iPressedPartialButton = True
-iChangedMyPath = False
-validState = False
-pathHasChanged = False
-moovingIsOk = False
+iChangedMyPath = pathHasChanged = False
+validState = moovingIsOk = False
 iAmOnMultipleTouch = False
-iPressedMyMultiButton = True
-iPressedMySingleButton = False
+  # Button State
+iPressedMyButton = iPressedMyStopButton = False
+iPressedTotalButton = iPressedMySingleButton = False
+iPressedPartialButton = iPressedMyMultiButton = True
+  # Error State
+singleButtonError = False
+multiButtonError = False
+justToCatchError = True
+
 
 #COLOR VAR
 red = (208, 14, 14)
@@ -52,22 +55,26 @@ heightInput = 50
 widthInput = 860
 posXInput = 180
 posYInput = yText = 300
-xButton = 1000
-loopData = countOf = myTempSpeed = 0
-yButton = 620
 xText = 150
-xStopButton = 50
-yStopButton = yButton
 xSpeedBar = 850
 ySpeedBar = 440
-
+  # Button Position
+    # PARTIAL
 xPartialButton = xSingleButton = 700
 yPartialButton = 290
+    # TOTAL
 xTotalButton = xMultiButton = 900
 yTotalButton = 290
-
+    # Single
 ySingleButton = 150
+    # MULTI
 yMultiButton = 150
+    # CALCULATE
+yButton = 620
+xButton = 1000
+    # STOP
+xStopButton = 50
+yStopButton = yButton
 
 
 #OTHER VAR
@@ -81,7 +88,7 @@ blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
 greyCross = pygame.image.load('Resources\\cross.png').convert_alpha()
 greyCross = pygame.transform.scale(greyCross, (80,80))
-
+  # BACKGROUND management
 location = (0,0)
 x = location[0]
 y = location[1]
@@ -90,20 +97,21 @@ temp.blit(ecran, (-x, -y))
 temp.blit(blackBackground, (0, 0))
 temp.set_alpha(100)
 
+# PROGRAM VAR
+loopData = countOf = myTempSpeed = 0
 count = -1
-finalListOfData = pressList = ['']
-coordinatesOfLayer = [int]
-coordinatesOfLayer.pop(0)
 releaseSeparator = 111111
 oldPath = ""
-myFinalList = []
 max47Code = 0
-tempLists = []
 perkCount = 0
-myDunnoList = []
-
 numberOfFPS = 60
-
+  # LISTS
+finalListOfData = pressList = ['']
+myDunnoList = []
+tempLists = []
+myFinalList = []
+coordinatesOfLayer = [int]
+coordinatesOfLayer.pop(0)
 #-------------------------
 
 #TEXT MANAGE
@@ -112,12 +120,16 @@ font = pygame.font.Font('Resources\\OpenSans-Light.ttf', 14)
 waitFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 24)
 secondFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 16)
 font2 = pygame.font.Font('freesansbold.ttf', 32)
-errorFont = pygame.font.Font('Resources\\OpenSans-Bold.ttf', 14)
+errorFont = pygame.font.Font('Resources\\OpenSans-Bold.ttf', 12)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
 lblLoading = waitFont.render(str("WAIT..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
+
+lblSingleError = errorFont.render(str("FILE TYPE: Should be Single-Touch"), True, red)
+lblMultiError = errorFont.render(str("FILE TYPE: Should be Multi-Touch"), True, red)
+
 lblFindPath = font.render(str("Search..."), True, black)
 lblPlaySpeed = font.render(str("PLAY SPEED"), True, black)
 
@@ -925,6 +937,7 @@ while run:
         tempLists = []
         perkCount = 0
         print("Error: Bad mod chosen")
+
     if iPressedMySingleButton:
       if max47Code > 1:
         iPressedMyButton = False
@@ -938,7 +951,6 @@ while run:
         if iPressedMyButton:
 
           perkCount = -1
-
           if not(iAmOnMultipleTouch):
             coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 
@@ -953,7 +965,7 @@ while run:
   else:
       iAmOnMultipleTouch = False
 
-  # Check If I Pressed My Buttons
+  # ---------- BUTTONS CHECK ----------
   myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
 
@@ -972,7 +984,7 @@ while run:
     # SINGLE Button detect
   labelString = "Single-Touch"
   xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton = buttonClickMaster(xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton, labelString)
-
+  # -----------------------------------
 
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
@@ -1015,12 +1027,38 @@ while run:
   # Draw a label "EV Test :"
   ecran.blit(lblFindEvtest, (700, 20))
 
-  # Show an error when the file cannot be found
+  # ---------------- ERROR MANAGEMENT ------------------
   if not(doesMyFileExist):
+    multiButtonError = False
+    singleButtonError = False
     # Show ERROR Label
     ecran.blit(lblFileError, (xPathField, yPathField + 25))
     # Show grey Cross Image
     ecran.blit(greyCross, (250, 220))
+
+  if iPressedMyButton:
+    if iPressedMyMultiButton:
+        if max47Code == 0:
+          singleButtonError = True
+        else:
+          singleButtonError = False
+    else:
+      singleButtonError = False
+
+    if iPressedMySingleButton:
+        if max47Code > 1:
+          multiButtonError = True
+        else:
+          multiButtonError = False
+    else:
+      multiButtonError = False
+
+  if singleButtonError:
+    ecran.blit(lblSingleError, (xPathField, yPathField + 25))
+  if multiButtonError:
+    ecran.blit(lblMultiError, (xPathField, yPathField + 25))
+  #--------------------------------------------------------
+
   
   # Draw the PATH AREA and the letter input
   xText, yText, user_input = drawPathArea(user_input, xText, yText)

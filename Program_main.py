@@ -1,7 +1,7 @@
 ##============================================================ 
 ##===        Visualise the touch of the CD4500 screen
 ##===                       
-##===                         v1.1.5
+##===                         v1.1.6
 ##============================================================ 
 
 import pygame, os, re, time
@@ -10,7 +10,7 @@ from importlib import reload
 # INITIALISATION
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
-pygame.display.set_caption("Screen touch Visualiser v1.1.5")
+pygame.display.set_caption("Screen touch Visualiser v1.1.6")
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.scrap.init()
 
@@ -30,6 +30,8 @@ validState = False
 pathHasChanged = False
 moovingIsOk = False
 iAmOnMultipleTouch = False
+iPressedMyMultiButton = True
+iPressedMySingleButton = False
 
 #COLOR VAR
 red = (208, 14, 14)
@@ -37,6 +39,8 @@ black = (0, 0, 0)
 blue = (34,138,164)
 white = (255,255,255)
 otherWhite = whiteVisualiser = myChangingColor = stopButtonColor = partialButtonColor = totalButtonColor = (220, 220, 220)
+singleColor = whiteVisualiser
+multiColor = whiteVisualiser
 customBlack = (33,29,50)
 whiteBackground = (245, 245, 245)
 
@@ -55,7 +59,16 @@ xText = 150
 xStopButton = 50
 yStopButton = yButton
 xSpeedBar = 850
-ySpeedBar = 340
+ySpeedBar = 440
+
+xPartialButton = xSingleButton = 700
+yPartialButton = 290
+xTotalButton = xMultiButton = 900
+yTotalButton = 290
+
+ySingleButton = 150
+yMultiButton = 150
+
 
 #OTHER VAR
 user_input_value = ""
@@ -107,9 +120,15 @@ lblLoading = waitFont.render(str("WAIT..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 lblFindPath = font.render(str("Search..."), True, black)
 lblPlaySpeed = font.render(str("PLAY SPEED"), True, black)
-lblVisualizeParameter = font.render(str("SIMULATION VIEW"), True, black)
-lblVisualizeParameterPartial = font.render(str("Partial"), True, black)
-lblVisualizeParameterTotal = font.render(str("Total"), True, black)
+
+lblSimViewParameter = font.render(str("SIMULATION VIEW"), True, black)
+lblSimViewParameterPartial = font.render(str("Partial"), True, black)
+lblSimViewParameterTotal = font.render(str("Total"), True, black)
+
+lblFileType = font.render("FILE TYPE", True, black)
+lblFileTypeSingle = font.render("Single-Touch", True, black)
+lblFileTypeMulti = font.render("Multi-Touch", True, black)
+
 lblButton = secondFont.render("Calculate... ", True, black)
 lblStopButton = secondFont.render("Stop... ", True, black)
 user_input = font.render(user_input_value, True, red)
@@ -257,7 +276,6 @@ def getContentOfClipboard():
   return clipboard
 
 
-
 # PROGRAM : Will Put Text In The Clipboard
 def textInsertInClipboard():
   pygame.scrap.put()
@@ -293,77 +311,67 @@ def changeMyMouseLook():
     if clickOnMe:
       ecran.blit(lblFindPath, (805, 20))
 
-xPartialButton = 700
-yPartialButton = 170
-xTotalButton = 900
-yTotalButton = 170
 
 # GRAPHIC : Change Simulation Option (PARTIAL to TOTAL)
-def visualizeOptionArea():
-  
-    #TITLE
-    ecran.blit(lblVisualizeParameter, (700, 130))
+def visualizeSimViewArea():
+  #TITLE
+  ecran.blit(lblSimViewParameter, (700, 250))
 
-    #PARTIAL
-      #Background
-    pygame.draw.rect(ecran, partialButtonColor, (xPartialButton, yPartialButton, 170, 40))
-      #Label
-    ecran.blit(lblVisualizeParameterPartial, (760, 180))
+  #PARTIAL
+    #Background
+  pygame.draw.rect(ecran, partialButtonColor, (xPartialButton, yPartialButton, 170, 40))
+    #Label
+  ecran.blit(lblSimViewParameterPartial, (760, 300))
 
-    #TOTAL
-      #Background
-    pygame.draw.rect(ecran, totalButtonColor, (xTotalButton, yTotalButton, 170, 40))
-      #Label
-    ecran.blit(lblVisualizeParameterTotal, (960, 180))
+  #TOTAL
+    #Background
+  pygame.draw.rect(ecran, totalButtonColor, (xTotalButton, yTotalButton, 170, 40))
+    #Label
+  ecran.blit(lblSimViewParameterTotal, (960, 300))
 
-def clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton):
+
+# GRAPHIC : Change File Type (SINGLE to MULTI)
+def visualizeFileTypeArea():
+  #TITLE
+  ecran.blit(lblFileType, (700, 110))
+  # SINGLE
+    #Background
+  pygame.draw.rect(ecran, singleColor, (xPartialButton, ySingleButton, 170, 40))
+    #Label
+  ecran.blit(lblFileTypeSingle, (745, ySingleButton + 8))
+  # MULTI
+    #Background
+  pygame.draw.rect(ecran, multiColor, (xTotalButton, yMultiButton, 170, 40))
+    #Label
+  ecran.blit(lblFileTypeMulti, (945, yMultiButton + 8))
+
+
+def buttonClickMaster(xButton, yButton, buttonColor, pressedMainButton, labelButton, pressedButtonNeighbour, labelString):
     if clickOnMe:
       if pygame.mouse.get_pressed() == (1,0,0):
-          if mousePos[0] > xTotalButton:
-            if mousePos[0] < xTotalButton + 170:
-              if mousePos[1] > yTotalButton:
-                if mousePos[1] < yTotalButton + 40:
-                  iPressedTotalButton = True
-                  iPressedPartialButton = False
+          if mousePos[0] > xButton:
+            if mousePos[0] < xButton + 170:
+              if mousePos[1] > yButton:
+                if mousePos[1] < yButton + 40:
+                  pressedMainButton = True
+                  pressedButtonNeighbour = False
 
-    if iPressedTotalButton:
-      totalButtonColor = black
-      lblVisualizeParameterTotal = font.render("Total", True, white)
+    if pressedMainButton:
+      buttonColor = black
+      labelButton = font.render(str(labelString), True, white)
 
-    if not(iPressedTotalButton):
-      lblVisualizeParameterTotal = font.render("Total", True, black)
-      totalButtonColor = otherWhite
+    if not(pressedMainButton):
+      labelButton = font.render(str(labelString), True, black)
+      buttonColor = otherWhite
 
-    return totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton
-
-
-def clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton):
-    if clickOnMe:
-      if pygame.mouse.get_pressed() == (1,0,0):
-          if mousePos[0] > xPartialButton:
-            if mousePos[0] < xPartialButton + 170:
-              if mousePos[1] > yPartialButton:
-                if mousePos[1] < yPartialButton + 40:
-                  iPressedPartialButton = True
-                  iPressedTotalButton = False
-
-    if iPressedPartialButton:
-      partialButtonColor = black
-      lblVisualizeParameterPartial = font.render(str("Partial"), True, white)
-
-    if not(iPressedPartialButton):
-      lblVisualizeParameterPartial = font.render("Partial", True, black)
-      partialButtonColor = otherWhite
-
-    return partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton
-
+    return xButton, yButton, buttonColor, pressedMainButton, labelButton, pressedButtonNeighbour
 
 # GRAPHIC : Show UI Element for the speed controller
 def numberOfFPSArea():
-  ecran.blit(lblPlaySpeed, (700, 300))
-  ecran.blit(lblNumberOfFps, (1000, 300))
+  ecran.blit(lblPlaySpeed, (700, 400))
+  ecran.blit(lblNumberOfFps, (1000, 400))
   #INPUT BAR CONTROLLING
-  pygame.draw.rect(ecran, whiteVisualiser, (700, 350, 400, 7))
+  pygame.draw.rect(ecran, whiteVisualiser, (700, 350 + 100, 400, 7))
   pygame.draw.rect(ecran, black, (xSpeedBar, ySpeedBar, 9, 30))
 
   #NUMBER OF FPS
@@ -547,7 +555,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
 
     # WIPING LIST WITH FILE
     if max47Code > 1:
-      if not(pathHasChanged):    
+      #if not(pathHasChanged):    
 
         if finalListOfData[0] != "47":
           finalListOfData.insert(0, "47")
@@ -604,8 +612,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
             data = writecontroller.giveList(u)
             tempLists.append(data)
           del writecontroller
-            
-      iAmOnMultipleTouch = True
+        iAmOnMultipleTouch = True
     else:
       iAmOnMultipleTouch = False
 
@@ -621,6 +628,8 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
   if iPressedMyButton:
     if perkCount == max47Code:
         myFinalList = []
+  if iPressedMySingleButton:
+    tempLists = []
   
   for u in range(perkCount, max47Code):
     try:
@@ -641,7 +650,7 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
 
   del whereToDraw
 
-  return perkCount, myFinalList, justToCatchError, myDunnoList
+  return perkCount, myFinalList, justToCatchError, myDunnoList, tempLists
 
 # PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
@@ -907,7 +916,24 @@ while run:
     path = re.sub("[\"]", "", path)
 
     finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists, perkCount)
-
+    
+    if iPressedMyMultiButton:
+      if max47Code == 0:
+        iPressedMyButton = False
+        iPressedMyStopButton = True
+        finalListOfData = []
+        tempLists = []
+        perkCount = 0
+        print("Error: Bad mod chosen")
+    if iPressedMySingleButton:
+      if max47Code > 1:
+        iPressedMyButton = False
+        iPressedMyStopButton = True
+        finalListOfData = []
+        tempLists = []
+        perkCount = 0
+        print("Error: Bad mod chosen")
+    
     if doesMyFileExist:
         if iPressedMyButton:
 
@@ -917,13 +943,36 @@ while run:
             coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
 
           iPressedMyButton = False
+  
+  if iPressedMyMultiButton:
+      iAmOnMultipleTouch = True
+      if max47Code == 0:
+        iPressedMyButton = False
+        iPressedMyStopButton = True
+        iAmOnMultipleTouch = False
+  else:
+      iAmOnMultipleTouch = False
 
   # Check If I Pressed My Buttons
   myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
-  partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton = clickPartialButtonDetect(partialButtonColor, iPressedPartialButton, lblVisualizeParameterPartial, iPressedTotalButton) 
-  totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton = clickTotalButtonDetect(totalButtonColor, iPressedTotalButton, lblVisualizeParameterTotal, iPressedPartialButton)
+
+    # PARTIAL Button Detect
+  labelString = "Partial"
+  xPartialButton, yPartialButton, partialButtonColor, iPressedPartialButton, lblSimViewParameterPartial, iPressedTotalButton = buttonClickMaster(xPartialButton, yPartialButton, partialButtonColor, iPressedPartialButton, lblSimViewParameterPartial, iPressedTotalButton, labelString)
   
+    # TOTAL Button Detect
+  labelString = "Total"
+  xTotalButton, yTotalButton, totalButtonColor, iPressedTotalButton, lblSimViewParameterTotal, iPressedPartialButton = buttonClickMaster(xTotalButton, yTotalButton, totalButtonColor, iPressedTotalButton, lblSimViewParameterTotal, iPressedPartialButton, labelString)
+  
+    # MULTI Button detect
+  labelString = "Multi-Touch"
+  xMultiButton, yMultiButton, multiColor, iPressedMyMultiButton, lblFileTypeMulti, iPressedMySingleButton = buttonClickMaster(xMultiButton, yMultiButton, multiColor, iPressedMyMultiButton, lblFileTypeMulti, iPressedMySingleButton, labelString)
+  
+    # SINGLE Button detect
+  labelString = "Single-Touch"
+  xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton = buttonClickMaster(xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton, labelString)
+
 
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
@@ -937,15 +986,16 @@ while run:
       numberOfFPS = myTempSpeed
     else:
       numberOfFPS = 60
-
   else:
     numberOfFPS = 60
 
   # UI Component (Total/Partial)
-  visualizeOptionArea()
-
+  visualizeSimViewArea()
+  # UI Component (SINGLE/MULTI)
+  visualizeFileTypeArea()
+  
   try:
-    perkCount, myFinalList, justToCatchError, myDunnoList = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
+    perkCount, myFinalList, justToCatchError, myDunnoList, tempLists = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
   except UnboundLocalError:
     # local variable "myFinalList" referenced before assignement
     pass

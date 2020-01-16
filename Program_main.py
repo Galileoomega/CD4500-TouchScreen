@@ -1002,8 +1002,6 @@ while run:
   xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton = buttonClickMaster(font, xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton, labelString)
   # -----------------------------------
   
-  print(singleColor)
-
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()

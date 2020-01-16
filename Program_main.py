@@ -1,7 +1,7 @@
 ##============================================================ 
 ##===        Visualise the touch of the CD4500 screen
 ##===                       
-##===                         v1.1.7
+##===                         v1.1.8
 ##============================================================ 
 
 import pygame, os, re, time
@@ -10,7 +10,7 @@ from importlib import reload
 # INITIALISATION
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
-pygame.display.set_caption("Screen touch Visualiser v1.1.7")
+pygame.display.set_caption("Screen touch Visualiser v1.1.8")
 pygame.scrap.init()
 
 # -----------VAR-----------
@@ -20,7 +20,7 @@ dt = clock.tick(60.0)
 
 # LOOP VAR
 run = clickOnMe = part1 = fingerPress = True
-theresSomething = focus = iUsedCtrlV = iUsedCtrlA = False
+theresSomething = focus = iUsedCtrlV = iUsedCtrlA = iHaveMyFile = False
 doesMyFileExist = True
 iChangedMyPath = pathHasChanged = False
 validState = moovingIsOk = False
@@ -29,6 +29,7 @@ iAmOnMultipleTouch = False
 iPressedMyButton = iPressedMyStopButton = False
 iPressedTotalButton = iPressedMySingleButton = False
 iPressedPartialButton = iPressedMyMultiButton = True
+iPressedMyScreenShotButton = False
   # Error State
 singleButtonError = False
 multiButtonError = False
@@ -41,6 +42,7 @@ black = (53, 50, 55)
 blue = (34,138,164)
 white = (255,255,255)
 otherWhite = whiteVisualiser = myChangingColor = stopButtonColor = partialButtonColor = totalButtonColor = (220, 220, 220)
+screenShotButtonColor = whiteVisualiser
 singleColor = whiteVisualiser
 multiColor = whiteVisualiser
 customWhite = (180, 180, 180)
@@ -72,6 +74,10 @@ xButton = 1000
     # STOP
 xStopButton = 50
 yStopButton = yButton
+    # SCREENSHOT
+xScreenShotButton = 240
+yScreenShotButton = 530
+
   # SIZE VAR
 heightInput = 50
 widthInput = 1000
@@ -82,6 +88,8 @@ yText = 300
 #OTHER VAR
 user_input_value = ""
 path = ""
+count3 = 5
+myFileName = ""
 
 # MEDIA IMAGE
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
@@ -135,6 +143,8 @@ lblMultiError = errorFont.render(str("FILE TYPE: Should be Multi-Touch"), True, 
 lblFindPath = font.render(str("Search..."), True, black)
 lblPlaySpeed = font.render(str("PLAY SPEED"), True, black)
 
+lblScreenShotButton = font.render(str("Take ScreenShot"), True, black)
+
 lblSimViewParameter = font.render(str("SIMULATION VIEW"), True, black)
 lblSimViewParameterPartial = font.render(str("Partial"), True, black)
 lblSimViewParameterTotal = font.render(str("Total"), True, black)
@@ -147,6 +157,9 @@ lblButton = secondFont.render("Calculate... ", True, black)
 lblStopButton = secondFont.render("Stop... ", True, black)
 user_input = font.render(user_input_value, True, red)
   #-----------------
+
+rect = pygame.Rect(20, 20, 600, 500)
+sub = ecran.subsurface(rect)
 
 #-----------FUNCTION-------------
 
@@ -342,6 +355,14 @@ def visualizeSimViewArea():
   pygame.draw.rect(ecran, totalButtonColor, (xTotalButton, yTotalButton, 170, 40))
     #Label
   ecran.blit(lblSimViewParameterTotal, (960, 300))
+
+
+# GRAPHIC : Take A SCreenShot
+def screenShotArea():
+    #Background
+  pygame.draw.rect(ecran, screenShotButtonColor, (xScreenShotButton, yScreenShotButton, 170, 40))
+    #Label
+  ecran.blit(lblScreenShotButton, (xScreenShotButton + 28, yScreenShotButton + 9))
 
 
 # GRAPHIC : Change File Type (SINGLE to MULTI)
@@ -896,6 +917,28 @@ while run:
   
   if iPressedMyButton:
 
+    path = user_input_value
+    # Put double Backslash for searching the file
+    path = re.sub("[\"]", "", path)
+
+    # ------ GET THE NAME OF THE FILE ------
+    while not(iHaveMyFile):
+      try:
+        for u in path[-count3]:
+          if u == "\\":
+            iHaveMyFile = True
+            break
+
+          myFileName += u
+          count3 += 1
+      except IndexError:
+        pass
+        iHaveMyFile = True
+    for i in myFileName[-1]:
+      finalFileName = myFileName[::-1]
+    print(finalFileName)
+    # ------------------------------------
+
     # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
     if len(coordinatesOfLayer) > 1:
       path, iChangedMyPath, oldPath = pathChecker(path, iChangedMyPath, oldPath)
@@ -906,13 +949,10 @@ while run:
       myFinalList = []
       oldPath = path
       pathHasChanged = True
+      myFileName = ""
+      iHaveMyFile = False
     else:
       pathHasChanged = False
-
-    path = user_input_value
-
-    # Put double Backslash for searching the file
-    path = re.sub("[\"]", "", path)
 
     finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists, perkCount)
     
@@ -923,17 +963,13 @@ while run:
         finalListOfData = []
         tempLists = []
         perkCount = 0
-        print("Error: Bad mod chosen")
-
     if iPressedMySingleButton:
       if max47Code > 1:
         iPressedMyButton = False
         iPressedMyStopButton = True
         finalListOfData = []
         tempLists = []
-        perkCount = 0
-        print("Error: Bad mod chosen")
-    
+        perkCount = 0    
     if doesMyFileExist:
         if iPressedMyButton:
 
@@ -972,7 +1008,20 @@ while run:
     # SINGLE Button detect
   labelString = "Single-Touch"
   xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton = buttonClickMaster(font, xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton, labelString)
+
+    # SCREENSHOT Button detect
+  labelString = "Take ScreenShot"
+  xScreenShotButton, yScreenShotButton, screenShotButtonColor, iPressedMyScreenShotButton, lblScreenShotButton, iPressedMyStopButton = buttonClickMaster(font, xScreenShotButton, yScreenShotButton, screenShotButtonColor, iPressedMyScreenShotButton, lblScreenShotButton, iPressedMyStopButton, labelString)
   # -----------------------------------
+
+  # SAVE A SCREENSHOT
+  if iPressedMyScreenShotButton:
+    if iPressedPartialButton:
+      pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-partial.jpg")
+      iPressedMyScreenShotButton = False
+    if iPressedTotalButton:
+      pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-total.jpg")
+      iPressedMyScreenShotButton = False
   
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
@@ -993,6 +1042,8 @@ while run:
   visualizeSimViewArea()
   # UI Component (SINGLE/MULTI)
   visualizeFileTypeArea()
+  # UI Component (SCREENSHOT)
+  screenShotArea()
   
   try:
     perkCount, myFinalList, justToCatchError, myDunnoList, tempLists = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)

@@ -471,31 +471,6 @@ def pathChecker(path, iChangedMyPath, oldPath):
   return path, iChangedMyPath, oldPath
 
 
-# Detect If User Click On Button "Calculate..."
-def clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton):
-  if clickOnMe:
-    if pygame.mouse.get_pressed() == (1,0,0):
-        if mousePos[0] > xButton:
-          if mousePos[0] < xButton + 140:
-            if mousePos[1] > yButton:
-              if mousePos[1] < yButton + 50:
-                myChangingColor = black
-                lblButton = secondFont.render("Calculate... ", True, white)
-                iPressedMyButton = True
-                iPressedMyStopButton = False
-
-    else:
-      myChangingColor = (220,220,220)
-      iPressedMyButton = False
-      lblButton = secondFont.render("Calculate... ", True, black)
-  else:
-    myChangingColor = (220,220,220)
-    iPressedMyButton = False
-    lblButton = secondFont.render("Calculate... ", True, black)
-  
-  return myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton
-
-
 # Detect If User Click On Button "Stop..."
 def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
   if clickOnMe:
@@ -644,7 +619,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempL
   
   return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount
 
-
+# PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
 def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
   
   import whereToDraw
@@ -801,7 +776,7 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
   return coordinatesOfLayer
 
 
-# Graphic Draw simulation line 
+# GRAPHIC : Draw simulation line 
 def drawLine(coordinatesOfLayer, validState, loopData):
     
     # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
@@ -965,7 +940,6 @@ while run:
           perkCount = -1
           if not(iAmOnMultipleTouch):
             coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
-
           iPressedMyButton = False
   
   if iPressedMyMultiButton:
@@ -977,9 +951,7 @@ while run:
   else:
       iAmOnMultipleTouch = False
 
-  # ---------- BUTTONS CHECK ----------
-  myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
-  
+  # ---------- BUTTONS CHECK ----------  
   labelString = "Calculate..."
   xButton, yButton, myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = buttonClickMaster(secondFont, xButton, yButton, myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, labelString)
 

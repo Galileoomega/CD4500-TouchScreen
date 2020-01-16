@@ -11,7 +11,6 @@ from importlib import reload
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
 pygame.display.set_caption("Screen touch Visualiser v1.1.6")
-os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.scrap.init()
 
 # -----------VAR-----------
@@ -38,23 +37,21 @@ justToCatchError = True
 
 #COLOR VAR
 red = (208, 14, 14)
-black = (0, 0, 0)
+black = (53, 50, 55)
 blue = (34,138,164)
 white = (255,255,255)
 otherWhite = whiteVisualiser = myChangingColor = stopButtonColor = partialButtonColor = totalButtonColor = (220, 220, 220)
 singleColor = whiteVisualiser
 multiColor = whiteVisualiser
+customWhite = (180, 180, 180)
 customBlack = (33,29,50)
-whiteBackground = (245, 245, 245)
+  # Color of the background
+whiteBackground = (250, 250, 250)
 
 #POSITION VAR
 pos = pos1 = 0, 0
 xPathField = 800
 yPathField = 20
-heightInput = 50
-widthInput = 860
-posXInput = 180
-posYInput = yText = 300
 xText = 150
 xSpeedBar = 850
 ySpeedBar = 440
@@ -75,7 +72,12 @@ xButton = 1000
     # STOP
 xStopButton = 50
 yStopButton = yButton
-
+  # SIZE VAR
+heightInput = 50
+widthInput = 1000
+posXInput = 90
+posYInput = 290
+yText = 300
 
 #OTHER VAR
 user_input_value = ""
@@ -88,7 +90,7 @@ blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
 greyCross = pygame.image.load('Resources\\cross.png').convert_alpha()
 greyCross = pygame.transform.scale(greyCross, (80,80))
-  # BACKGROUND management
+  # BACKGROUND INPUT BAR management
 location = (0,0)
 x = location[0]
 y = location[1]
@@ -177,7 +179,7 @@ def drawPathArea(user_input, xText, yText):
   return xText, yText, user_input
 
 
-# GRAPHIC
+# GRAPHIC : BACKGROUND COLOR
 def setBackgroundColor():
   ecran.fill(whiteBackground)
 
@@ -358,23 +360,33 @@ def visualizeFileTypeArea():
   ecran.blit(lblFileTypeMulti, (945, yMultiButton + 8))
 
 
-def buttonClickMaster(xButton, yButton, buttonColor, pressedMainButton, labelButton, pressedButtonNeighbour, labelString):
+def buttonClickMaster(font, xButton, yButton, buttonColor, pressedMainButton, labelButton, pressedButtonNeighbour, labelString):
+    imOnFly = False
+
     if clickOnMe:
+      if mousePos[0] > xButton:
+        if mousePos[0] < xButton + 170:
+          if mousePos[1] > yButton:
+            if mousePos[1] < yButton + 40:
+              buttonColor = customWhite
+              imOnFly = True
+
       if pygame.mouse.get_pressed() == (1,0,0):
-          if mousePos[0] > xButton:
-            if mousePos[0] < xButton + 170:
-              if mousePos[1] > yButton:
-                if mousePos[1] < yButton + 40:
-                  pressedMainButton = True
-                  pressedButtonNeighbour = False
+        if mousePos[0] > xButton:
+          if mousePos[0] < xButton + 170:
+            if mousePos[1] > yButton:
+              if mousePos[1] < yButton + 40:
+                pressedMainButton = True
+                pressedButtonNeighbour = False
 
     if pressedMainButton:
       buttonColor = black
       labelButton = font.render(str(labelString), True, white)
 
-    if not(pressedMainButton):
-      labelButton = font.render(str(labelString), True, black)
-      buttonColor = otherWhite
+    if not(imOnFly):
+      if not(pressedMainButton):
+        labelButton = font.render(str(labelString), True, black)
+        buttonColor = otherWhite
 
     return xButton, yButton, buttonColor, pressedMainButton, labelButton, pressedButtonNeighbour
 
@@ -967,24 +979,30 @@ while run:
 
   # ---------- BUTTONS CHECK ----------
   myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = clickButtonDetect(myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton)
+  
+  labelString = "Calculate..."
+  xButton, yButton, myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton = buttonClickMaster(secondFont, xButton, yButton, myChangingColor, iPressedMyButton, lblButton, iPressedMyStopButton, labelString)
+
   stopButtonColor, iPressedMyStopButton, lblStopButton = clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton)
 
     # PARTIAL Button Detect
   labelString = "Partial"
-  xPartialButton, yPartialButton, partialButtonColor, iPressedPartialButton, lblSimViewParameterPartial, iPressedTotalButton = buttonClickMaster(xPartialButton, yPartialButton, partialButtonColor, iPressedPartialButton, lblSimViewParameterPartial, iPressedTotalButton, labelString)
+  xPartialButton, yPartialButton, partialButtonColor, iPressedPartialButton, lblSimViewParameterPartial, iPressedTotalButton = buttonClickMaster(font, xPartialButton, yPartialButton, partialButtonColor, iPressedPartialButton, lblSimViewParameterPartial, iPressedTotalButton, labelString)
   
     # TOTAL Button Detect
   labelString = "Total"
-  xTotalButton, yTotalButton, totalButtonColor, iPressedTotalButton, lblSimViewParameterTotal, iPressedPartialButton = buttonClickMaster(xTotalButton, yTotalButton, totalButtonColor, iPressedTotalButton, lblSimViewParameterTotal, iPressedPartialButton, labelString)
+  xTotalButton, yTotalButton, totalButtonColor, iPressedTotalButton, lblSimViewParameterTotal, iPressedPartialButton = buttonClickMaster(font, xTotalButton, yTotalButton, totalButtonColor, iPressedTotalButton, lblSimViewParameterTotal, iPressedPartialButton, labelString)
   
     # MULTI Button detect
   labelString = "Multi-Touch"
-  xMultiButton, yMultiButton, multiColor, iPressedMyMultiButton, lblFileTypeMulti, iPressedMySingleButton = buttonClickMaster(xMultiButton, yMultiButton, multiColor, iPressedMyMultiButton, lblFileTypeMulti, iPressedMySingleButton, labelString)
+  xMultiButton, yMultiButton, multiColor, iPressedMyMultiButton, lblFileTypeMulti, iPressedMySingleButton = buttonClickMaster(font, xMultiButton, yMultiButton, multiColor, iPressedMyMultiButton, lblFileTypeMulti, iPressedMySingleButton, labelString)
   
     # SINGLE Button detect
   labelString = "Single-Touch"
-  xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton = buttonClickMaster(xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton, labelString)
+  xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton = buttonClickMaster(font, xSingleButton, ySingleButton, singleColor, iPressedMySingleButton, lblFileTypeSingle, iPressedMyMultiButton, labelString)
   # -----------------------------------
+  
+  print(singleColor)
 
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()

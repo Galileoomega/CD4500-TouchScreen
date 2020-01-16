@@ -1,5 +1,5 @@
 # THIS CONTROLLER CONTAIN A MARSHAL
-# Related to v1.1.5
+# Related to v1.1.6
 
 import appender
 from importlib import reload

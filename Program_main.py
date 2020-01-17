@@ -104,6 +104,7 @@ user_input_value = ""
 path = ""
 count3 = 5
 myFileName = ""
+makeAFor = 1
 
 # MEDIA IMAGE
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
@@ -529,7 +530,7 @@ def clickStopButtonDetect(stopButtonColor, iPressedMyStopButton, lblStopButton):
   return stopButtonColor, iPressedMyStopButton, lblStopButton
 
 
-def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists, perkCount):
+def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkCount, tempLists):
   code47List = []
 
   # Try to open the file, if it cannot an error is show
@@ -812,13 +813,14 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
 
 # GRAPHIC : Draw simulation line 
-def drawLine(coordinatesOfLayer, validState, loopData):
+def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
     
     # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
     if iPressedTotalButton:
       makeAFor = len(coordinatesOfLayer)
     else:
-      makeAFor = 1
+      makeAFor += 1
+      loopData = 0
 
     for u in range(0, makeAFor):
       firstPass = True
@@ -827,6 +829,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
         validState = True
       except IndexError:
         loopData = 0
+        makeAFor = 0
         validState = False
 
       if validState:
@@ -840,8 +843,10 @@ def drawLine(coordinatesOfLayer, validState, loopData):
             lala = coordinatesOfLayer[loopData + 3]
           except IndexError:
             loopData = 0
+            makeAFor = 0
         except IndexError:
           loopData = 0
+          makeAFor = 0
 
         startx = coordinatesOfLayer[loopData]
         starty = coordinatesOfLayer[loopData + 1]
@@ -853,6 +858,7 @@ def drawLine(coordinatesOfLayer, validState, loopData):
             loopData += 3
         except IndexError:
           loopData = 0
+          makeAFor = 0
         
         if perkCount == 0:
           lineColor = color0
@@ -868,14 +874,20 @@ def drawLine(coordinatesOfLayer, validState, loopData):
           lineColor = color5
 
         # BUILDER
+        # Condition is just to change the width of the line
         if iPressedPartialButton:
           pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 5)
         else:
           pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 4)
 
         loopData += 2
+    
+    if not(iPressedTotalButton):
+      if loopData >= len(coordinatesOfLayer):
+        makeAFor = 0
+        loopData = 0
 
-    return loopData
+    return loopData, makeAFor
 #--------------------------------
 
 while run:
@@ -980,7 +992,7 @@ while run:
     else:
       pathHasChanged = False
 
-    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, tempLists, perkCount)
+    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkCount, tempLists)
     
     if iPressedMyMultiButton:
       if max47Code == 0:
@@ -1041,13 +1053,17 @@ while run:
   # -----------------------------------
 
   # SAVE A SCREENSHOT
-  if iPressedMyScreenShotButton:
-    if iPressedPartialButton:
-      pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-partial.jpg")
-      iPressedMyScreenShotButton = False
-    if iPressedTotalButton:
-      pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-total.jpg")
-      iPressedMyScreenShotButton = False
+  try:
+    if iPressedMyScreenShotButton:
+      if iPressedPartialButton:
+        pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-partial.jpg")
+        iPressedMyScreenShotButton = False
+      if iPressedTotalButton:
+        pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-total.jpg")
+        iPressedMyScreenShotButton = False
+  except NameError:
+    print("Can't take a screenshot")
+    iPressedMyScreenShotButton = False
   
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
@@ -1079,9 +1095,9 @@ while run:
 
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:
-      loopData = drawLine(coordinatesOfLayer, validState, loopData)
+      loopData, makeAFor = drawLine(coordinatesOfLayer, validState, loopData, makeAFor)
     else:
-      loopData = drawLine(myFinalList, validState, loopData)
+      loopData, makeAFor = drawLine(myFinalList, validState, loopData, makeAFor)
 
   if iPressedMyStopButton:
     tempLists = []

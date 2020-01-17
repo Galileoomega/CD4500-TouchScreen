@@ -25,6 +25,7 @@ doesMyFileExist = True
 iChangedMyPath = pathHasChanged = False
 validState = moovingIsOk = False
 iAmOnMultipleTouch = False
+IfinishedToDraw = True
   # Button State
 iPressedMyButton = iPressedMyStopButton = False
 iPressedTotalButton = iPressedMySingleButton = False
@@ -152,8 +153,8 @@ lblFindEvtest = font.render(str("File EVTEST :"), True, black)
 lblLoading = waitFont.render(str("WAIT..."), True, black)
 lblFileError = errorFont.render(str("Error: Missing File"), True, red)
 
-lblSingleError = errorFont.render(str("FILE TYPE: Should be Single-Touch"), True, red)
-lblMultiError = errorFont.render(str("FILE TYPE: Should be Multi-Touch"), True, red)
+lblSingleError = errorFont.render(str("FILE TYPE : Should be Single-Touch mode"), True, red)
+lblMultiError = errorFont.render(str("FILE TYPE : Should be Multi-Touch mode"), True, red)
 
 lblFindPath = font.render(str("Search..."), True, black)
 lblPlaySpeed = font.render(str("PLAY SPEED"), True, black)
@@ -395,7 +396,7 @@ def visualizeFileTypeArea():
     #Label
   ecran.blit(lblFileTypeMulti, (945, yMultiButton + 8))
 
-
+# PROGRAM : A function which allows to detect click on a BUTTON
 def buttonClickMaster(font, xButton, yButton, buttonColor, pressedMainButton, labelButton, pressedButtonNeighbour, labelString):
     imOnFly = False
 
@@ -655,10 +656,14 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
   
   return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount
 
+
 # PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
 def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
   
   import whereToDraw
+
+  if perkCount == max47Code:
+    perkCount = 0
 
   if iPressedMyButton:
     if perkCount == max47Code:
@@ -668,12 +673,12 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
   
   for u in range(perkCount, max47Code):
     try:
-      myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList)
+      myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList, iPressedTotalButton)
     except IndexError:
       pass
     except UnboundLocalError:
       myDunnoList = []
-      myFinalList = whereToDraw.lineBuild(tempLists[u], myDunnoList)
+      myFinalList = whereToDraw.lineBuild(tempLists[u], myDunnoList, iPressedTotalButton)
     perkCount += 1
     justToCatchError = False
     break
@@ -686,6 +691,7 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
   del whereToDraw
 
   return perkCount, myFinalList, justToCatchError, myDunnoList, tempLists
+
 
 # PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
@@ -813,7 +819,8 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
 
 # GRAPHIC : Draw simulation line 
-def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
+def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw):
+    IfinishedToDraw = False
     
     # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
     if iPressedTotalButton:
@@ -831,6 +838,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
         loopData = 0
         makeAFor = 0
         validState = False
+        IfinishedToDraw = True
 
       if validState:
         try:
@@ -844,9 +852,11 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
           except IndexError:
             loopData = 0
             makeAFor = 0
+            IfinishedToDraw = True
         except IndexError:
           loopData = 0
           makeAFor = 0
+          IfinishedToDraw = True
 
         startx = coordinatesOfLayer[loopData]
         starty = coordinatesOfLayer[loopData + 1]
@@ -859,6 +869,9 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
         except IndexError:
           loopData = 0
           makeAFor = 0
+          IfinishedToDraw = True
+
+        print(perkCount)
         
         if perkCount == 0:
           lineColor = color0
@@ -872,6 +885,8 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
           lineColor = color4
         elif perkCount == 5:
           lineColor = color5
+        else:
+          lineColor = blue
 
         # BUILDER
         # Condition is just to change the width of the line
@@ -886,8 +901,11 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor):
       if loopData >= len(coordinatesOfLayer):
         makeAFor = 0
         loopData = 0
+        IfinishedToDraw = True
+    else:
+      IfinishedToDraw = True
 
-    return loopData, makeAFor
+    return loopData, makeAFor, IfinishedToDraw
 #--------------------------------
 
 while run:
@@ -973,8 +991,11 @@ while run:
       except IndexError:
         pass
         iHaveMyFile = True
-    for i in myFileName[-1]:
-      finalFileName = myFileName[::-1]
+    try:
+      for i in myFileName[-1]:
+        finalFileName = myFileName[::-1]
+    except IndexError:
+      pass
     # ------------------------------------
 
     # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
@@ -1008,13 +1029,12 @@ while run:
         finalListOfData = []
         tempLists = []
         perkCount = 0    
-    if doesMyFileExist:
-        if iPressedMyButton:
 
-          perkCount = -1
-          if not(iAmOnMultipleTouch):
-            coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
-          iPressedMyButton = False
+    if doesMyFileExist:
+      perkCount = 0
+      if not(iAmOnMultipleTouch):
+        coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
+      iPressedMyButton = False
   
   if iPressedMyMultiButton:
       iAmOnMultipleTouch = True
@@ -1086,18 +1106,18 @@ while run:
   visualizeFileTypeArea()
   # UI Component (SCREENSHOT)
   screenShotArea()
-  
-  try:
-    perkCount, myFinalList, justToCatchError, myDunnoList, tempLists = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
-  except UnboundLocalError:
-    # local variable "myFinalList" referenced before assignement
-    pass
+  if IfinishedToDraw:
+    try:
+      perkCount, myFinalList, justToCatchError, myDunnoList, tempLists = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
+    except UnboundLocalError:
+      # local variable "myFinalList" referenced before assignement
+      pass
 
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:
-      loopData, makeAFor = drawLine(coordinatesOfLayer, validState, loopData, makeAFor)
+      loopData, makeAFor, IfinishedToDraw = drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw)
     else:
-      loopData, makeAFor = drawLine(myFinalList, validState, loopData, makeAFor)
+      loopData, makeAFor, IfinishedToDraw = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw)
 
   if iPressedMyStopButton:
     tempLists = []

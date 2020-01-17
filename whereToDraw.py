@@ -7,9 +7,12 @@ from importlib import reload
 appender = reload(appender)
 
 releaseSeparator = 111111
-myFinalList = []
 
-def lineBuild(myList, myFinalList):
+
+def lineBuild(myList, myFinalList, iPressedMyTotalButton):
+
+  if not(iPressedMyTotalButton):
+    myFinalList = []
 
   marshallLineX = 0
   marshallLineY = 0

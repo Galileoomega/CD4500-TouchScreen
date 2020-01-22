@@ -9,10 +9,15 @@ appender = reload(appender)
 releaseSeparator = 111111
 
 
-def lineBuild(myList, myFinalList, iPressedMyTotalButton):
+def lineBuild(myList, myFinalList, iPressedMyTotalButton, resetList):
 
   if not(iPressedMyTotalButton):
-    myFinalList = []
+    if resetList:
+      myFinalList = []
+  
+  if iPressedMyTotalButton:
+    if len(myFinalList) > (len(myList) * 2):
+      myFinalList = []
 
   marshallLineX = 0
   marshallLineY = 0

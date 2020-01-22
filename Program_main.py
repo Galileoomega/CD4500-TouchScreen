@@ -681,7 +681,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
         open('appender.py', 'w').close()
         open('writecontroller.py', 'w').close()
 
-        perkCount = 0 
+        #perkCount = 0 
 
         fWriteController = open("writecontroller.py", "w+")
         fWhereToDraw = open("whereToDraw.py", "a+")
@@ -739,19 +739,27 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
   
   import whereToDraw
+  if iPressedPartialButton:
+    if perkCount == max47Code:
+      perkCount = 0
+      resetList = True
+    else:
+      resetList = False
+  else:
+    resetList = False
+    iPressedMyButton = False
 
-  if perkCount == max47Code:
-    perkCount = 0
 
   if iPressedMyButton:
-    if perkCount == max47Code:
-        myFinalList = []
+    if iPressedPartialButton:
+      if perkCount == max47Code:
+          myFinalList = []
   if iPressedMySingleButton:
     tempLists = []
   
   for u in range(perkCount, max47Code):
     try:
-      myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList, iPressedTotalButton)
+      myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList, iPressedTotalButton, resetList)
     except IndexError:
       pass
     except UnboundLocalError:
@@ -1117,7 +1125,7 @@ while run:
         perkCount = 0    
 
     if doesMyFileExist:
-      perkCount = 0
+      #perkCount = 0
       if not(iAmOnMultipleTouch):
         if not(multiButtonError):
           if path != oldPath:

@@ -130,6 +130,7 @@ releaseSeparator = 111111
 oldPath = ""
 max47Code = 0
 perkCount = 0
+firstTime = 0
 numberOfFPS = 60
   # LISTS
 finalListOfData = pressList = ['']
@@ -194,7 +195,7 @@ def drawVisualArea():
   ecran.blit(lblStopButton, (xStopButton + 45, yStopButton + 10))
 
 
-# GRAPHIC : Print user key press and the path field
+# GRAPHIC : Show user key press and the path field
 def drawPathArea(user_input, xText, yText):
   pygame.draw.rect(ecran, whiteVisualiser, (xPathField,yPathField,210,23))
 
@@ -496,16 +497,18 @@ def replaceText(user_input, user_input_value):
 
 
 # PROGRAM: Will look if the user changed the path
-def pathChecker(path, iChangedMyPath, oldPath):
+def pathChecker(path, iChangedMyPath, oldPath, firstTime):
   
   if oldPath != path:
-    iChangedMyPath = True
+    if firstTime != 0:
+      iChangedMyPath = True
+    firstTime += 1
     #oldPath = path
   else:
     oldPath = path
     iChangedMyPath = False
   
-  return path, iChangedMyPath, oldPath
+  return path, iChangedMyPath, oldPath, firstTime
 
 
 # Detect If User Click On Button "Stop..."
@@ -696,6 +699,7 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
 # PROGRAM Prepare a list of coordinate for making simulation lines
 def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
+
   firstPassOfX = firstPassOfY = True
   iHaveMyNextDataX = iHaveMyNextDataY = False
   press = yAdded = xAdded = False
@@ -830,6 +834,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
       loopData = 0
 
     for u in range(0, makeAFor):
+      print(len(coordinatesOfLayer), "++++" , makeAFor)
       firstPass = True
       try:
         lala = coordinatesOfLayer[loopData + 3]
@@ -870,8 +875,6 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
           loopData = 0
           makeAFor = 0
           IfinishedToDraw = True
-
-        print(perkCount)
         
         if perkCount == 0:
           lineColor = color0
@@ -898,7 +901,12 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
         loopData += 2
     
     if not(iPressedTotalButton):
-      if loopData >= len(coordinatesOfLayer):
+      if makeAFor >= (len(coordinatesOfLayer)):
+        makeAFor = 0
+        loopData = 0
+        IfinishedToDraw = True
+
+      if loopData >= (len(coordinatesOfLayer)):
         makeAFor = 0
         loopData = 0
         IfinishedToDraw = True
@@ -1000,16 +1008,16 @@ while run:
 
     # PATH MANAGEMENT (Check if its a new and wait for reset coordinateOfLayer)
     if len(coordinatesOfLayer) > 1:
-      path, iChangedMyPath, oldPath = pathChecker(path, iChangedMyPath, oldPath)
-    else:
-      oldPath = path
+      path, iChangedMyPath, oldPath, firstTime = pathChecker(path, iChangedMyPath, oldPath, firstTime)
     if iChangedMyPath:
-      coordinatesOfLayer = []
-      myFinalList = []
-      oldPath = path
-      pathHasChanged = True
-      myFileName = ""
-      iHaveMyFile = False
+      if not(singleButtonError):
+        print(singleButtonError)
+        coordinatesOfLayer = []
+        myFinalList = []
+        oldPath = path
+        pathHasChanged = True
+        myFileName = ""
+        iHaveMyFile = False
     else:
       pathHasChanged = False
 
@@ -1019,21 +1027,25 @@ while run:
       if max47Code == 0:
         iPressedMyButton = False
         iPressedMyStopButton = True
-        finalListOfData = []
+        #finalListOfData = []
         tempLists = []
         perkCount = 0
     if iPressedMySingleButton:
       if max47Code > 1:
         iPressedMyButton = False
         iPressedMyStopButton = True
-        finalListOfData = []
+        #finalListOfData = []
         tempLists = []
         perkCount = 0    
 
     if doesMyFileExist:
       perkCount = 0
       if not(iAmOnMultipleTouch):
-        coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
+        if not(multiButtonError):
+          if path != oldPath:
+            coordinatesOfLayer = []
+            oldPath = path
+            coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
       iPressedMyButton = False
   
   if iPressedMyMultiButton:
@@ -1141,6 +1153,7 @@ while run:
     if iPressedMyMultiButton:
         if max47Code == 0:
           singleButtonError = True
+          oldPath = "lala"
         else:
           singleButtonError = False
     else:

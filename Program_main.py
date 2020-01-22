@@ -90,8 +90,11 @@ xButton = 1000
 xStopButton = 50
 yStopButton = yButton
     # SCREENSHOT
-xScreenShotButton = 240
+xScreenShotButton = 20
 yScreenShotButton = 530
+    # OUTPUT CONSOLE
+xOutput = 320
+yOutput = 550
 
   # SIZE VAR
 heightInput = 50
@@ -128,12 +131,15 @@ loopData = countOf = myTempSpeed = 0
 count = -1
 releaseSeparator = 111111
 oldPath = ""
+myConsoleMessage = 'Console Output :'
+howManyPress = "None"
 max47Code = 0
 perkCount = 0
 firstTime = 0
 numberOfFPS = 60
   # LISTS
 finalListOfData = pressList = ['']
+stringOfCoordinatesOfLayer = []
 myDunnoList = []
 tempLists = []
 myFinalList = []
@@ -148,6 +154,7 @@ waitFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 24)
 secondFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 16)
 font2 = pygame.font.Font('freesansbold.ttf', 32)
 errorFont = pygame.font.Font('Resources\\OpenSans-Bold.ttf', 12)
+consoleFont = pygame.font.Font('Resources\\Inconsolata\\Inconsolata-Regular.ttf', 14)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
@@ -173,6 +180,8 @@ lblFileTypeMulti = font.render("Multi-Touch", True, black)
 lblButton = secondFont.render("Calculate... ", True, black)
 lblStopButton = secondFont.render("Stop... ", True, black)
 user_input = font.render(user_input_value, True, red)
+
+lblConsoleOutput = consoleFont.render(str(myConsoleMessage), True, black)
   #-----------------
 
 rect = pygame.Rect(20, 20, 600, 500)
@@ -182,7 +191,6 @@ sub = ecran.subsurface(rect)
 
 # GRAPHIC : Draw element on the screen
 def drawVisualArea():
-  
     # Visualiser Area
   pygame.draw.rect(ecran, whiteVisualiser, (20,20,600,500))
 
@@ -190,9 +198,76 @@ def drawVisualArea():
   pygame.draw.rect(ecran, myChangingColor, (xButton, yButton, 140, 50))
   ecran.blit(lblButton, (xButton + 30, yButton + 10))
 
-    #"Stop" Button
+    # "Stop" Button
   pygame.draw.rect(ecran, stopButtonColor, (xStopButton, yStopButton, 140, 50))
   ecran.blit(lblStopButton, (xStopButton + 45, yStopButton + 10))
+
+
+def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress, max47Code):
+
+  # OUTPUT CONSOLE Area
+  pygame.draw.rect(ecran, whiteVisualiser, (xOutput, yOutput, 550, 100))
+  # MAIN LABEL
+  ecran.blit(lblConsoleOutput, (xOutput, yOutput - 20))
+  
+  # LABEL1 (Mod touch)
+  if iPressedMySingleButton:
+      lblConsoleOutput1 = consoleFont.render("MOD : Single-Touch", True, black)
+  else:
+      lblConsoleOutput1 = consoleFont.render("MOD : Multi-Touch", True, black)
+    
+  # LABEL2 (there's an error ?)
+  lblConsoleOutput2 = consoleFont.render("Error : None", True, black)
+
+  # LABEL3 (Number of press)
+  try:
+    if howManyPress == None:
+      howManyPress = "None"
+  except UnboundLocalError:
+    howManyPress = "None"
+  
+  if iPressedMyButton:
+    if iPressedMySingleButton:
+      stringOfCoordinatesOfLayer = []
+      for u in coordinatesOfLayer:
+        u = str(u)
+        stringOfCoordinatesOfLayer.append(u)
+
+      temp = '(?:% s)' % '|'.join(stringOfCoordinatesOfLayer) 
+      array = re.findall(str(releaseSeparator), temp)
+      howManyPress = len(array)
+    else:
+      stringOfmyFinalList = []
+      for u in myFinalList:
+        u = str(u)
+        stringOfmyFinalList.append(u)
+
+      temp = '(?:% s)' % '|'.join(stringOfmyFinalList) 
+      array = re.findall(str(releaseSeparator), temp)
+      howManyPress = len(array)
+
+  lblConsoleOutput3 = consoleFont.render("Number Of Press : " + str(howManyPress), True, black)
+
+  # LABEL4 (Max Finger)
+  if iPressedMyButton:
+    if max47Code == 0:
+      max47Code = 1
+  
+  lblConsoleOutput4 = consoleFont.render("All Fingers : " + str(max47Code), True, black)
+
+  # LABEL5 (actual finger)
+  if myFinalList == []:
+    label5Message = "None"
+  else:
+    label5Message = perkCount
+  lblConsoleOutput5 = consoleFont.render("Actual Finger : " + str(label5Message), True, black)
+
+  ecran.blit(lblConsoleOutput1, (xOutput + 5, yOutput))
+  ecran.blit(lblConsoleOutput2, (xOutput + 20, yOutput + 17))
+  ecran.blit(lblConsoleOutput3, (xOutput + 20, yOutput + 32))
+  ecran.blit(lblConsoleOutput4, (xOutput + 20, yOutput + 47))
+  ecran.blit(lblConsoleOutput5, (xOutput + 20, yOutput + 62))
+  return myConsoleMessage, howManyPress
 
 
 # GRAPHIC : Show user key press and the path field
@@ -834,7 +909,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
       loopData = 0
 
     for u in range(0, makeAFor):
-      print(len(coordinatesOfLayer), "++++" , makeAFor)
+      #print(len(coordinatesOfLayer), "++++" , makeAFor)
       firstPass = True
       try:
         lala = coordinatesOfLayer[loopData + 3]
@@ -916,7 +991,10 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
     return loopData, makeAFor, IfinishedToDraw
 #--------------------------------
 
+
+#-----------------------------------------START LOOP--------------------------------------------
 while run:
+  print(perkCount)
 
   # NEED To reset the FPS Label
   lblNumberOfFps = font.render(str(myTempSpeed), True, black)
@@ -1094,12 +1172,13 @@ while run:
         pygame.image.save(sub, "ScreenShots\\" + finalFileName + "-total.jpg")
         iPressedMyScreenShotButton = False
   except NameError:
-    print("Can't take a screenshot")
+    print("Can't take a screenshot: No file ")
     iPressedMyScreenShotButton = False
   
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
+  myConsoleMessage, howManyPress = console(myConsoleMessage, lblConsoleOutput, coordinatesOfLayer, howManyPress, max47Code)
 
   # FPS MANAGEMENT
   if iPressedPartialButton:

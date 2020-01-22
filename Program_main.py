@@ -137,6 +137,8 @@ max47Code = 0
 perkCount = 0
 firstTime = 0
 numberOfFPS = 60
+oldLoopData = 1
+oldPerkCount = 0
   # LISTS
 finalListOfData = pressList = ['']
 stringOfCoordinatesOfLayer = []
@@ -144,6 +146,7 @@ myDunnoList = []
 tempLists = []
 myFinalList = []
 coordinatesOfLayer = [int]
+lenOfMyList = [0, 0, 0, 0, 0, 0]
 coordinatesOfLayer.pop(0)
 #-------------------------
 
@@ -259,7 +262,21 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   if myFinalList == []:
     label5Message = "None"
   else:
-    label5Message = perkCount
+    label5Message = str(perkCount)
+    if perkCount == 0:
+      label5Message += " Red"
+    elif perkCount == 1:
+      label5Message += " Blue"
+    elif perkCount == 2:
+      label5Message += " Green"
+    elif perkCount == 3:
+      label5Message += " Purple"
+    elif perkCount == 4:
+      label5Message += " Orange"
+    elif perkCount == 5:
+      label5Message += " Cyan"
+    else:
+      label5Message += " blue"
   lblConsoleOutput5 = consoleFont.render("Actual Finger : " + str(label5Message), True, black)
 
   ecran.blit(lblConsoleOutput1, (xOutput + 5, yOutput))
@@ -736,12 +753,14 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 
 
 # PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
-def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList):
+def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount):
   
   import whereToDraw
   if iPressedPartialButton:
     if perkCount == max47Code:
       perkCount = 0
+      oldLoopData = 0
+      oldPerkCount = 0
       resetList = True
     else:
       resetList = False
@@ -756,12 +775,33 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
           myFinalList = []
   if iPressedMySingleButton:
     tempLists = []
+    perkCount = 0
   
   for u in range(perkCount, max47Code):
     try:
       myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList, iPressedTotalButton, resetList)
+      lenOfMyList[0] = len(whereToDraw.lineBuild(tempLists[0], myFinalList, iPressedTotalButton, resetList))
+      lenOfMyList[1] = len(whereToDraw.lineBuild(tempLists[1], myFinalList, iPressedTotalButton, resetList))
+      try:
+        lenOfMyList[2] = len(whereToDraw.lineBuild(tempLists[2], myFinalList, iPressedTotalButton, resetList))
+      except IndexError:
+        pass
+      try:
+        lenOfMyList[3] = len(whereToDraw.lineBuild(tempLists[3], myFinalList, iPressedTotalButton, resetList))
+      except IndexError:
+        pass
+      try:
+        lenOfMyList[4] = len(whereToDraw.lineBuild(tempLists[4], myFinalList, iPressedTotalButton, resetList))
+      except IndexError:
+        pass
+      try:
+        lenOfMyList[5] = len(whereToDraw.lineBuild(tempLists[5], myFinalList, iPressedTotalButton, resetList))
+      except IndexError:
+        pass
+
     except IndexError:
       pass
+
     except UnboundLocalError:
       myDunnoList = []
       myFinalList = whereToDraw.lineBuild(tempLists[u], myDunnoList, iPressedTotalButton)
@@ -776,7 +816,7 @@ def writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatc
 
   del whereToDraw
 
-  return perkCount, myFinalList, justToCatchError, myDunnoList, tempLists
+  return lenOfMyList, perkCount, myFinalList, justToCatchError, myDunnoList, tempLists, oldLoopData, oldPerkCount
 
 
 # PROGRAM Prepare a list of coordinate for making simulation lines
@@ -906,9 +946,9 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 
 
 # GRAPHIC : Draw simulation line 
-def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw):
+def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount):
     IfinishedToDraw = False
-    
+    lineColor = red
     # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
     if iPressedTotalButton:
       makeAFor = len(coordinatesOfLayer)
@@ -916,13 +956,30 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
       makeAFor += 1
       loopData = 0
 
+    if iAmOnMultipleTouch:
+      if iPressedPartialButton:
+        if oldPerkCount != perkCount:
+          makeAFor = oldLoopData
+
     for u in range(0, makeAFor):
+      try:
+        if loopData < lenOfMyList[0]:
+          lineColor = color0
+      except IndexError:
+        pass
+      try:
+        if loopData > lenOfMyList[0]:
+          if loopData < lenOfMyList[1]:
+            lineColor = color1
+      except IndexError:
+        pass
       #print(len(coordinatesOfLayer), "++++" , makeAFor)
       firstPass = True
       try:
         lala = coordinatesOfLayer[loopData + 3]
         validState = True
       except IndexError:
+        oldLoopData = makeAFor
         loopData = 0
         makeAFor = 0
         validState = False
@@ -938,10 +995,12 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
           try:
             lala = coordinatesOfLayer[loopData + 3]
           except IndexError:
+            oldLoopData = makeAFor
             loopData = 0
             makeAFor = 0
             IfinishedToDraw = True
         except IndexError:
+          oldLoopData = makeAFor
           loopData = 0
           makeAFor = 0
           IfinishedToDraw = True
@@ -955,24 +1014,10 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
           if coordinatesOfLayer[loopData + 4] == releaseSeparator:
             loopData += 3
         except IndexError:
+          oldLoopData = makeAFor
           loopData = 0
           makeAFor = 0
           IfinishedToDraw = True
-        
-        if perkCount == 0:
-          lineColor = color0
-        elif perkCount == 1:
-          lineColor = color1
-        elif perkCount == 2:
-          lineColor = color2
-        elif perkCount == 3:
-          lineColor = color3
-        elif perkCount == 4:
-          lineColor = color4
-        elif perkCount == 5:
-          lineColor = color5
-        else:
-          lineColor = blue
 
         # BUILDER
         # Condition is just to change the width of the line
@@ -985,18 +1030,21 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
     
     if not(iPressedTotalButton):
       if makeAFor >= (len(coordinatesOfLayer)):
+        oldLoopData = makeAFor
         makeAFor = 0
         loopData = 0
         IfinishedToDraw = True
 
       if loopData >= (len(coordinatesOfLayer)):
+        oldLoopData = makeAFor
         makeAFor = 0
         loopData = 0
         IfinishedToDraw = True
     else:
       IfinishedToDraw = True
 
-    return loopData, makeAFor, IfinishedToDraw
+    oldPerkCount = perkCount
+    return loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount
 #--------------------------------
 
 
@@ -1207,16 +1255,16 @@ while run:
   screenShotArea()
   if IfinishedToDraw:
     try:
-      perkCount, myFinalList, justToCatchError, myDunnoList, tempLists = writingMultipleLines(perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList)
+      lenOfMyList, perkCount, myFinalList, justToCatchError, myDunnoList, tempLists, oldLoopData, oldPerkCount = writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount)
     except UnboundLocalError:
       # local variable "myFinalList" referenced before assignement
       pass
 
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:
-      loopData, makeAFor, IfinishedToDraw = drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw)
+      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount = drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
     else:
-      loopData, makeAFor, IfinishedToDraw = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw)
+      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
 
   if iPressedMyStopButton:
     tempLists = []

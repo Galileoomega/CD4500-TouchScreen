@@ -10,9 +10,8 @@ releaseSeparator = 111111
 
 
 def lineBuild(myList, myFinalList, iPressedMyTotalButton, resetList):
-
-  if not(iPressedMyTotalButton):
-    if resetList:
+  
+  if resetList:
       myFinalList = []
   
   if iPressedMyTotalButton:

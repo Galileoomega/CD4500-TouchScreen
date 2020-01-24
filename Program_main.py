@@ -755,6 +755,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
         iAmOnMultipleTouch = True
     else:
       iAmOnMultipleTouch = False
+      max47Code = 1
 
     #-----------------------------------------
   
@@ -764,6 +765,15 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 # PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
 def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount):
   import whereToDraw
+  print(iPressedMyButton)
+  if iPressedMyButton:
+    if perkCount == max47Code:
+      perkCount = 0
+      oldLoopData = 0
+      oldPerkCount = 0
+      resetList = True
+    else:
+      resetList = False
   if iPressedPartialButton:
     if perkCount == max47Code:
       perkCount = 0
@@ -962,7 +972,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
     lineColor = red
     # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
     if iPressedTotalButton:
-      makeAFor = (lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2] + lenOfMyList[3] + lenOfMyList[4] + lenOfMyList[5]) / 2
+      makeAFor = len(coordinatesOfLayer)
       makeAFor = int(makeAFor)
     else:
       makeAFor += 1
@@ -1094,8 +1104,6 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
 #-----------------------------------------START LOOP--------------------------------------------
 while run:
 
-  print(lenOfMyList)
-
   # NEED To reset the FPS Label
   lblNumberOfFps = font.render(str(myTempSpeed), True, black)
 
@@ -1220,7 +1228,7 @@ while run:
       #perkCount = 0
       if not(iAmOnMultipleTouch):
         if not(multiButtonError):
-          if path != oldPath:
+          #if path != oldPath:
             coordinatesOfLayer = []
             oldPath = path
             coordinatesOfLayer = whereToDrawLine(finalListOfData, coordinatesOfLayer)
@@ -1262,6 +1270,7 @@ while run:
   xScreenShotButton, yScreenShotButton, screenShotButtonColor, iPressedMyScreenShotButton, lblScreenShotButton, iPressedMyStopButton = buttonClickMaster(font, xScreenShotButton, yScreenShotButton, screenShotButtonColor, iPressedMyScreenShotButton, lblScreenShotButton, iPressedMyStopButton, labelString)
   # -----------------------------------
 
+
   # SAVE A SCREENSHOT
   try:
     if iPressedMyScreenShotButton:
@@ -1297,12 +1306,13 @@ while run:
   visualizeFileTypeArea()
   # UI Component (SCREENSHOT)
   screenShotArea()
-  if IfinishedToDraw:
-    try:
-      lenOfMyList, perkCount, myFinalList, justToCatchError, myDunnoList, tempLists, oldLoopData, oldPerkCount = writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount)
-    except UnboundLocalError:
-      # local variable "myFinalList" referenced before assignement
-      pass
+  if iAmOnMultipleTouch:
+    if IfinishedToDraw:
+      try:
+        lenOfMyList, perkCount, myFinalList, justToCatchError, myDunnoList, tempLists, oldLoopData, oldPerkCount = writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount)
+      except UnboundLocalError:
+        # local variable "myFinalList" referenced before assignement
+        pass
 
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:

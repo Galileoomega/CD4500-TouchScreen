@@ -72,6 +72,8 @@ yPathField = 20
 xText = 150
 xSpeedBar = 850
 ySpeedBar = 440
+lblPosX = 0
+lblPosY = 0
   # Button Position
     # PARTIAL
 xPartialButton = xSingleButton = 700
@@ -139,6 +141,8 @@ firstTime = 0
 numberOfFPS = 60
 oldLoopData = 1
 oldPerkCount = 0
+spacelabel = ""
+
 errorMessage = "None"
   # LISTS
 finalListOfData = pressList = ['']
@@ -207,29 +211,40 @@ def drawVisualArea():
   ecran.blit(lblStopButton, (xStopButton + 45, yStopButton + 10))
 
 
-def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress, max47Code):
+# PROGRAM / GRAPHIC : Will determine how long is the word and will align words with dots
+def printSpaces(wordlength):
+  spacelabel = ""
+  for u in range(0, 25-wordlength):
+    spacelabel = spacelabel + "."
+  return spacelabel
+
+
+# GRAPHIC : The label of the output console
+def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress, max47Code, spacelabel):
 
   # OUTPUT CONSOLE Area
   pygame.draw.rect(ecran, whiteVisualiser, (xOutput, yOutput, 550, 100))
   # MAIN LABEL
   ecran.blit(lblConsoleOutput, (xOutput, yOutput - 20))
   
-  # LABEL1 (Mod touch)
+  #----------------------------------LABEL1 (Mod touch)----------------------------------
+  spacelabel = printSpaces(3)
   if iPressedMySingleButton:
-      lblConsoleOutput1 = consoleFont.render("MOD : Single-Touch", True, black)
+      lblConsoleOutput1 = consoleFont.render("MOD :" + spacelabel + "Single-Touch", True, black)
   else:
-      lblConsoleOutput1 = consoleFont.render("MOD : Multi-Touch", True, black)
-    
-  # LABEL2 (there's an error ?)
-  lblConsoleOutput2 = consoleFont.render("Error : " + errorMessage, True, black)
+      lblConsoleOutput1 = consoleFont.render("MOD :" + spacelabel + "Multi-Touch", True, black)
+  #--------------------------------------------------------------------------------------
 
-  # LABEL3 (Number of press)
+  #------------------------------LABEL2 (there's an error ?)----------------------------------
+  lblConsoleOutput2 = consoleFont.render("Error : " + errorMessage, True, black)
+  #-------------------------------------------------------------------------------------------
+  
+  #----------------------------------LABEL3 (Number of press)----------------------------------
   try:
     if howManyPress == None:
       howManyPress = "None"
   except UnboundLocalError:
     howManyPress = "None"
-  
   if iPressedMyButton:
     if iPressedMySingleButton:
       stringOfCoordinatesOfLayer = []
@@ -249,17 +264,19 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
       temp = '(?:% s)' % '|'.join(stringOfmyFinalList) 
       array = re.findall(str(releaseSeparator), temp)
       howManyPress = len(array)
+  spacelabel = printSpaces(15)
+  lblConsoleOutput3 = consoleFont.render("Number Of Press :" + spacelabel + str(howManyPress), True, black)
+  #-------------------------------------------------------------------------------------------------
 
-  lblConsoleOutput3 = consoleFont.render("Number Of Press : " + str(howManyPress), True, black)
-
-  # LABEL4 (Max Finger)
+  #----------------------------------LABEL4 (Max Finger)----------------------------------
   if iPressedMyButton:
     if max47Code == 0:
       max47Code = 1
-  
-  lblConsoleOutput4 = consoleFont.render("Number Of Fingers : " + str(max47Code), True, black)
+  spacelabel = printSpaces(17)
+  lblConsoleOutput4 = consoleFont.render("Number Of Fingers :" + spacelabel + str(max47Code), True, black)
+  #---------------------------------------------------------------------------------------
 
-  # LABEL5 (actual finger)
+  #----------------------------------LABEL5 (actual finger)---------------------------------
   if iAmOnMultipleTouch:
     if not(iPressedTotalButton):
       if myFinalList == []:
@@ -284,14 +301,28 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
       label5Message = "All"
   else:
     label5Message = "1"
-  lblConsoleOutput5 = consoleFont.render("Actual Finger : " + str(label5Message), True, black)
+  spacelabel = printSpaces(13)
+  lblConsoleOutput5 = consoleFont.render("Actual Finger :" + spacelabel + str(label5Message), True, black)
+  #---------------------------------------------------------------------------------------------
+
+  #----------------------------------LABEL6 (xPosition)----------------------------------
+  spacelabel = printSpaces(11)
+  lblConsoleOutput6 = consoleFont.render("Actual PosX :" + spacelabel + str(lblPosX), True, black)
+  #--------------------------------------------------------------------------------------
+
+  #----------------------------------LABEL7 (yPosition)----------------------------------
+  spacelabel = printSpaces(11)
+  lblConsoleOutput7 = consoleFont.render("Actual PosY :" + spacelabel + str(lblPosY), True, black)
+  #--------------------------------------------------------------------------------------
 
   ecran.blit(lblConsoleOutput1, (xOutput + 5, yOutput))
-  ecran.blit(lblConsoleOutput2, (xOutput + 210, yOutput))
-  ecran.blit(lblConsoleOutput3, (xOutput + 20, yOutput + 32))
-  ecran.blit(lblConsoleOutput4, (xOutput + 20, yOutput + 47))
-  ecran.blit(lblConsoleOutput5, (xOutput + 20, yOutput + 62))
-  return myConsoleMessage, howManyPress
+  ecran.blit(lblConsoleOutput2, (xOutput + 300, yOutput))
+  ecran.blit(lblConsoleOutput3, (xOutput + 5, yOutput + 22))
+  ecran.blit(lblConsoleOutput4, (xOutput + 5, yOutput + 37))
+  ecran.blit(lblConsoleOutput5, (xOutput + 5, yOutput + 52))
+  ecran.blit(lblConsoleOutput6, (xOutput + 5, yOutput + 67))
+  ecran.blit(lblConsoleOutput7, (xOutput + 5, yOutput + 82))
+  return myConsoleMessage, howManyPress, spacelabel
 
 
 # GRAPHIC : Show user key press and the path field
@@ -1094,8 +1125,20 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
     else:
       IfinishedToDraw = True
 
+    # Taking out the coordinate data for output console
+    if iPressedPartialButton:
+      try:
+        lblPosX = endx
+        lblPosY = endy
+      except UnboundLocalError:
+        lblPosX = 0
+        lblPosY = 0
+    else:
+      lblPosX = 0
+      lblPosY = 0
+
     oldPerkCount = perkCount
-    return loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount
+    return loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY
 #--------------------------------
 
 
@@ -1285,7 +1328,7 @@ while run:
   # VISUAL AND CONSTANT STUFF
   setBackgroundColor()
   drawVisualArea()
-  myConsoleMessage, howManyPress = console(myConsoleMessage, lblConsoleOutput, coordinatesOfLayer, howManyPress, max47Code)
+  myConsoleMessage, howManyPress, spacelabel = console(myConsoleMessage, lblConsoleOutput, coordinatesOfLayer, howManyPress, max47Code, spacelabel)
 
   # FPS MANAGEMENT
   if iPressedPartialButton:
@@ -1314,9 +1357,9 @@ while run:
 
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:
-      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount = drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
+      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
     else:
-      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
+      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
 
   if iPressedMyStopButton:
     tempLists = []
@@ -1356,10 +1399,10 @@ while run:
 
   if singleButtonError:
     ecran.blit(lblSingleError, (xPathField, yPathField + 25))
-    errorMessage = "FILE TYPE : Should be Single-Touch mode"
+    errorMessage = "Should be Single-Touch mode"
   if multiButtonError:
     ecran.blit(lblMultiError, (xPathField, yPathField + 25))
-    errorMessage = "FILE TYPE : Should be Multi-Touch mode"
+    errorMessage = "Should be Multi-Touch mode"
   #--------------------------------------------------------
 
   

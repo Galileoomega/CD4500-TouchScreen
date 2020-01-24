@@ -287,7 +287,7 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   lblConsoleOutput5 = consoleFont.render("Actual Finger : " + str(label5Message), True, black)
 
   ecran.blit(lblConsoleOutput1, (xOutput + 5, yOutput))
-  ecran.blit(lblConsoleOutput2, (xOutput + 20, yOutput + 17))
+  ecran.blit(lblConsoleOutput2, (xOutput + 210, yOutput))
   ecran.blit(lblConsoleOutput3, (xOutput + 20, yOutput + 32))
   ecran.blit(lblConsoleOutput4, (xOutput + 20, yOutput + 47))
   ecran.blit(lblConsoleOutput5, (xOutput + 20, yOutput + 62))
@@ -810,7 +810,6 @@ def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validStat
           lenOfMyList[5] += lenOfMyList[4]
         except IndexError:
           pass
-
     except IndexError:
       pass
 

@@ -228,11 +228,11 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   ecran.blit(lblConsoleOutput, (xOutput, yOutput - 20))
   
   #----------------------------------LABEL1 (Mod touch)----------------------------------
-  spacelabel = printSpaces(3)
+  spacelabel = printSpaces(9)
   if iPressedMySingleButton:
-      lblConsoleOutput1 = consoleFont.render("MOD :" + spacelabel + "Single-Touch", True, black)
+      lblConsoleOutput1 = consoleFont.render("File Type :" + spacelabel + "Single-Touch", True, black)
   else:
-      lblConsoleOutput1 = consoleFont.render("MOD :" + spacelabel + "Multi-Touch", True, black)
+      lblConsoleOutput1 = consoleFont.render("File Type :" + spacelabel + "Multi-Touch", True, black)
   #--------------------------------------------------------------------------------------
 
   #------------------------------LABEL2 (there's an error ?)----------------------------------
@@ -245,8 +245,8 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
       howManyPress = "None"
   except UnboundLocalError:
     howManyPress = "None"
-  if iPressedMyButton:
-    if iPressedMySingleButton:
+
+  if iPressedMySingleButton:
       stringOfCoordinatesOfLayer = []
       for u in coordinatesOfLayer:
         u = str(u)
@@ -255,7 +255,7 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
       temp = '(?:% s)' % '|'.join(stringOfCoordinatesOfLayer) 
       array = re.findall(str(releaseSeparator), temp)
       howManyPress = len(array)
-    else:
+  else:
       stringOfmyFinalList = []
       for u in myFinalList:
         u = str(u)
@@ -272,8 +272,8 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   if iPressedMyButton:
     if max47Code == 0:
       max47Code = 1
-  spacelabel = printSpaces(17)
-  lblConsoleOutput4 = consoleFont.render("Number Of Fingers :" + spacelabel + str(max47Code), True, black)
+  spacelabel = printSpaces(11)
+  lblConsoleOutput4 = consoleFont.render("Max Fingers :" + spacelabel + str(max47Code), True, black)
   #---------------------------------------------------------------------------------------
 
   #----------------------------------LABEL5 (actual finger)---------------------------------

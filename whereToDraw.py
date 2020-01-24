@@ -14,9 +14,9 @@ def lineBuild(myList, myFinalList, iPressedMyTotalButton, resetList):
   if resetList:
       myFinalList = []
   
-  if iPressedMyTotalButton:
-    if len(myFinalList) > (len(myList) * 2):
-      myFinalList = []
+  #if iPressedMyTotalButton:
+    #if len(myFinalList) > (len(myList) * 2):
+  #    myFinalList = []
 
   marshallLineX = 0
   marshallLineY = 0

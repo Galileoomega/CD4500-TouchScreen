@@ -766,14 +766,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount):
   import whereToDraw
   print(iPressedMyButton)
-  if iPressedMyButton:
-    if perkCount == max47Code:
-      perkCount = 0
-      oldLoopData = 0
-      oldPerkCount = 0
-      resetList = True
-    else:
-      resetList = False
+  
   if iPressedPartialButton:
     if perkCount == max47Code:
       perkCount = 0
@@ -784,6 +777,12 @@ def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validStat
       resetList = False
   else:
     resetList = False
+  
+  if iPressedMyButton:
+      perkCount = 0
+      oldLoopData = 0
+      oldPerkCount = 0
+      resetList = True
 
 
   if iPressedMyButton:

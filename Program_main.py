@@ -763,7 +763,6 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 
 # PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
 def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount):
-  
   import whereToDraw
   if iPressedPartialButton:
     if perkCount == max47Code:
@@ -775,7 +774,6 @@ def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validStat
       resetList = False
   else:
     resetList = False
-    iPressedMyButton = False
 
 
   if iPressedMyButton:
@@ -788,30 +786,30 @@ def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validStat
   
   for u in range(perkCount, max47Code):
     try:
-      myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList, iPressedTotalButton, resetList)
-      lenOfMyList[0] = len(whereToDraw.lineBuild(tempLists[0], myFinalList, iPressedTotalButton, True))
-      lenOfMyList[1] = len(whereToDraw.lineBuild(tempLists[1], myFinalList, iPressedTotalButton, True))
-      lenOfMyList[1] += lenOfMyList[0]
-      try:
-        lenOfMyList[2] = len(whereToDraw.lineBuild(tempLists[2], myFinalList, iPressedTotalButton, True))
-        lenOfMyList[2] += lenOfMyList[1]
-      except IndexError:
-        pass
-      try:
-        lenOfMyList[3] = len(whereToDraw.lineBuild(tempLists[3], myFinalList, iPressedTotalButton, True))
-        lenOfMyList[3] += lenOfMyList[2]
-      except IndexError:
-        pass
-      try:
-        lenOfMyList[4] = len(whereToDraw.lineBuild(tempLists[4], myFinalList, iPressedTotalButton, True))
-        lenOfMyList[4] += lenOfMyList[3]
-      except IndexError:
-        pass
-      try:
-        lenOfMyList[5] = len(whereToDraw.lineBuild(tempLists[5], myFinalList, iPressedTotalButton, True))
-        lenOfMyList[5] += lenOfMyList[4]
-      except IndexError:
-        pass
+        myFinalList = whereToDraw.lineBuild(tempLists[u], myFinalList, iPressedTotalButton, resetList)
+        lenOfMyList[0] = len(whereToDraw.lineBuild(tempLists[0], myFinalList, iPressedTotalButton, True))
+        lenOfMyList[1] = len(whereToDraw.lineBuild(tempLists[1], myFinalList, iPressedTotalButton, True))
+        lenOfMyList[1] += lenOfMyList[0]
+        try:
+          lenOfMyList[2] = len(whereToDraw.lineBuild(tempLists[2], myFinalList, iPressedTotalButton, True))
+          lenOfMyList[2] += lenOfMyList[1]
+        except IndexError:
+          pass
+        try:
+          lenOfMyList[3] = len(whereToDraw.lineBuild(tempLists[3], myFinalList, iPressedTotalButton, True))
+          lenOfMyList[3] += lenOfMyList[2]
+        except IndexError:
+          pass
+        try:
+          lenOfMyList[4] = len(whereToDraw.lineBuild(tempLists[4], myFinalList, iPressedTotalButton, True))
+          lenOfMyList[4] += lenOfMyList[3]
+        except IndexError:
+          pass
+        try:
+          lenOfMyList[5] = len(whereToDraw.lineBuild(tempLists[5], myFinalList, iPressedTotalButton, True))
+          lenOfMyList[5] += lenOfMyList[4]
+        except IndexError:
+          pass
 
     except IndexError:
       pass
@@ -1096,6 +1094,8 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
 
 #-----------------------------------------START LOOP--------------------------------------------
 while run:
+
+  print(lenOfMyList)
 
   # NEED To reset the FPS Label
   lblNumberOfFps = font.render(str(myTempSpeed), True, black)

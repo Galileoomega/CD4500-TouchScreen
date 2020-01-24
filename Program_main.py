@@ -139,6 +139,7 @@ firstTime = 0
 numberOfFPS = 60
 oldLoopData = 1
 oldPerkCount = 0
+errorMessage = "None"
   # LISTS
 finalListOfData = pressList = ['']
 stringOfCoordinatesOfLayer = []
@@ -220,7 +221,7 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
       lblConsoleOutput1 = consoleFont.render("MOD : Multi-Touch", True, black)
     
   # LABEL2 (there's an error ?)
-  lblConsoleOutput2 = consoleFont.render("Error : None", True, black)
+  lblConsoleOutput2 = consoleFont.render("Error : " + errorMessage, True, black)
 
   # LABEL3 (Number of press)
   try:
@@ -639,13 +640,15 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
   try:
     myFile = open(path, "r")
     doesMyFileExist = True
+    errorMessage = "None"
     try:
       fileContent = myFile.read()
+      errorMessage = "None"
     except UnicodeDecodeError:
       doesMyFileExist = False
-      print("Error... Invalid Format")
+      errorMessage = "Invalid Format"
   except OSError:
-    print("Error... Unable to find the file")
+    errorMessage = "Unable to find the file"
     doesMyFileExist = False
     max47Code = 0
     iAmOnMultipleTouch = False
@@ -755,7 +758,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 
     #-----------------------------------------
   
-  return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount
+  return finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount, errorMessage
 
 
 # PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
@@ -1197,7 +1200,7 @@ while run:
     else:
       pathHasChanged = False
 
-    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkCount, tempLists)
+    finalListOfData, doesMyFileExist, max47Code, tempLists, iAmOnMultipleTouch, perkCount, errorMessage = fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkCount, tempLists)
     
     if iPressedMyMultiButton:
       if max47Code == 0:
@@ -1346,8 +1349,10 @@ while run:
 
   if singleButtonError:
     ecran.blit(lblSingleError, (xPathField, yPathField + 25))
+    errorMessage = "FILE TYPE : Should be Single-Touch mode"
   if multiButtonError:
     ecran.blit(lblMultiError, (xPathField, yPathField + 25))
+    errorMessage = "FILE TYPE : Should be Multi-Touch mode"
   #--------------------------------------------------------
 
   

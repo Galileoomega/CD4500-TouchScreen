@@ -257,7 +257,7 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
     if max47Code == 0:
       max47Code = 1
   
-  lblConsoleOutput4 = consoleFont.render("All Fingers : " + str(max47Code), True, black)
+  lblConsoleOutput4 = consoleFont.render("Number Of Fingers : " + str(max47Code), True, black)
 
   # LABEL5 (actual finger)
   if iAmOnMultipleTouch:
@@ -765,7 +765,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
 # PROGRAM : A whereToDrawLine() but for MULTIPLE TOUCH 
 def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validState, justToCatchError, myDunnoList, iPressedMyButton, myFinalList, oldLoopData, oldPerkCount):
   import whereToDraw
-    
+
   if iPressedPartialButton:
     if perkCount == max47Code:
       perkCount = 0
@@ -777,8 +777,11 @@ def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validStat
   else:
     resetList = False
   
-  #if iPressedMyButton:
-    #resetList = True
+  if iPressedMyButton:
+    perkCount = 0
+    oldLoopData = 0
+    oldPerkCount = 0
+    resetList = True
 
 
   if iPressedMyButton:

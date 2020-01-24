@@ -38,11 +38,11 @@ justToCatchError = True
 
 
 #COLOR VAR
-red = (208, 14, 14)
+red = (179, 0, 0)
 black = (53, 50, 55)
 blue = (34,138,164)
 white = (255,255,255)
-green = (14, 208, 14)
+green = (0, 153, 77)
 purple = (152, 3, 252)
 orange = (252, 115, 3)
 cyan = (3, 252, 240)

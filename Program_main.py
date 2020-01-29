@@ -111,6 +111,7 @@ path = ""
 count3 = 5
 myFileName = ""
 makeAFor = 1
+artefactDetector = 0
 
 # MEDIA IMAGE
 MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
@@ -153,6 +154,7 @@ myFinalList = []
 coordinatesOfLayer = [int]
 lenOfMyList = [0, 0, 0, 0, 0, 0]
 coordinatesOfLayer.pop(0)
+bigList = []
 #-------------------------
 
 #TEXT MANAGE
@@ -272,8 +274,8 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   if iPressedMyButton:
     if max47Code == 0:
       max47Code = 1
-  spacelabel = printSpaces(11)
-  lblConsoleOutput4 = consoleFont.render("Max Fingers :" + spacelabel + str(max47Code), True, black)
+  spacelabel = printSpaces(17)
+  lblConsoleOutput4 = consoleFont.render("Number Of Fingers :" + spacelabel + str(max47Code), True, black)
   #---------------------------------------------------------------------------------------
 
   #----------------------------------LABEL5 (actual finger)---------------------------------
@@ -305,23 +307,18 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   lblConsoleOutput5 = consoleFont.render("Actual Finger :" + spacelabel + str(label5Message), True, black)
   #---------------------------------------------------------------------------------------------
 
-  #----------------------------------LABEL6 (xPosition)----------------------------------
-  spacelabel = printSpaces(11)
-  lblConsoleOutput6 = consoleFont.render("Actual PosX :" + spacelabel + str(lblPosX), True, black)
-  #--------------------------------------------------------------------------------------
-
-  #----------------------------------LABEL7 (yPosition)----------------------------------
-  spacelabel = printSpaces(11)
-  lblConsoleOutput7 = consoleFont.render("Actual PosY :" + spacelabel + str(lblPosY), True, black)
+  #----------------------------------LABEL6 (Position)----------------------------------
+  spacelabel = printSpaces(15)
+  lblPosition = str(lblPosX) + " x", str(lblPosY) + " y"
+  lblConsoleOutput6 = consoleFont.render("Actual Position :" + spacelabel + str(lblPosition), True, black)
   #--------------------------------------------------------------------------------------
 
   ecran.blit(lblConsoleOutput1, (xOutput + 5, yOutput))
   ecran.blit(lblConsoleOutput2, (xOutput + 300, yOutput))
-  ecran.blit(lblConsoleOutput3, (xOutput + 5, yOutput + 22))
-  ecran.blit(lblConsoleOutput4, (xOutput + 5, yOutput + 37))
-  ecran.blit(lblConsoleOutput5, (xOutput + 5, yOutput + 52))
-  ecran.blit(lblConsoleOutput6, (xOutput + 5, yOutput + 67))
-  ecran.blit(lblConsoleOutput7, (xOutput + 5, yOutput + 82))
+  ecran.blit(lblConsoleOutput3, (xOutput + 5, yOutput + 23))
+  ecran.blit(lblConsoleOutput4, (xOutput + 5, yOutput + 40))
+  ecran.blit(lblConsoleOutput5, (xOutput + 5, yOutput + 56))
+  ecran.blit(lblConsoleOutput6, (xOutput + 5, yOutput + 73))
   return myConsoleMessage, howManyPress, spacelabel
 
 
@@ -679,7 +676,7 @@ def fileOpenning(part1, finalListOfData, count, doesMyFileExist, loopData, perkC
       doesMyFileExist = False
       errorMessage = "Invalid Format"
   except OSError:
-    errorMessage = "Unable to find the file"
+    errorMessage = "Path Error"
     doesMyFileExist = False
     max47Code = 0
     iAmOnMultipleTouch = False
@@ -999,6 +996,9 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount):
     IfinishedToDraw = False
     lineColor = red
+    newFinger = False
+    newFingerBegin = False
+
     # Watch if we have to make a for-loop or just one pass (TOTAL/PARTIAL) 
     if iPressedTotalButton:
       makeAFor = len(coordinatesOfLayer)
@@ -1012,50 +1012,93 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
         if oldPerkCount != perkCount:
           makeAFor = oldLoopData
 
+    index = max47Code
+
     for u in range(0, makeAFor):
 
       #----------COLOR CHOOSER PART---------
       if iAmOnMultipleTouch:
-        try:
-          if loopData < lenOfMyList[0]:
-            lineColor = color0
-        except IndexError:
-          pass
-        try:
-          if loopData > lenOfMyList[0]:
-            if loopData < lenOfMyList[1]:
-              lineColor = color1
-        except IndexError:
-          pass
-        try:
-          if loopData > lenOfMyList[1]:
-            if loopData < lenOfMyList[2]:
-              lineColor = color2
-        except IndexError:
-          pass
-        try:
-          if loopData > lenOfMyList[2]:
-            if loopData < lenOfMyList[3]:
-              lineColor = color3
-        except IndexError:
-          pass
-        try:
-          if loopData > lenOfMyList[0]:
-            if loopData < lenOfMyList[1]:
-              lineColor = color4
-        except IndexError:
-          pass
-        try:
-          if loopData > lenOfMyList[0]:
-            if loopData < lenOfMyList[1]:
-              lineColor = color1
-        except IndexError:
-          pass
+        
+        # FOR PARTIAL MODE
+        if iPressedPartialButton:
+          try:
+            if loopData < lenOfMyList[0]:
+              lineColor = red
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[0]:
+              if loopData < lenOfMyList[1]:
+                lineColor = blue
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[1]:
+              if loopData < lenOfMyList[2]:
+                lineColor = green
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[2]:
+              if loopData < lenOfMyList[3]:
+                lineColor = color3
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[3]:
+              if loopData < lenOfMyList[4]:
+                lineColor = color4
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[4]:
+              if loopData < lenOfMyList[5]:
+                lineColor = color1
+          except IndexError:
+            pass
+        # FOR TOTAL MOD
+        else:
+          # Sorting length of data for color changing
+          lenOfMyList.sort(reverse = True) 
+          try:
+            if loopData < lenOfMyList[0]:
+              lineColor = red
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[0]:
+              if loopData < lenOfMyList[0] + lenOfMyList[1]:
+                lineColor = blue
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[0] + lenOfMyList[1]:
+              if loopData < lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2]:
+                lineColor = green
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2]:
+              if loopData < lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2] + lenOfMyList[3]:
+                lineColor = color3
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[3]:
+              if loopData < lenOfMyList[4]:
+                lineColor = color4
+          except IndexError:
+            pass
+          try:
+            if loopData > lenOfMyList[4]:
+              if loopData < lenOfMyList[5]:
+                lineColor = color1
+          except IndexError:
+            pass
+
       else:
         lineColor = color0
       #--------------------------------------
-
-      #print(len(coordinatesOfLayer), "++++" , makeAFor)
       firstPass = True
       try:
         lala = coordinatesOfLayer[loopData + 3]
@@ -1066,6 +1109,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
         makeAFor = 0
         validState = False
         IfinishedToDraw = True
+        break
 
       if validState:
         try:
@@ -1081,11 +1125,13 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
             loopData = 0
             makeAFor = 0
             IfinishedToDraw = True
+            break
         except IndexError:
           oldLoopData = makeAFor
           loopData = 0
           makeAFor = 0
           IfinishedToDraw = True
+          break
 
         startx = coordinatesOfLayer[loopData]
         starty = coordinatesOfLayer[loopData + 1]
@@ -1095,18 +1141,45 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
         try:
           if coordinatesOfLayer[loopData + 4] == releaseSeparator:
             loopData += 3
+            if newFinger:
+              newFinger = False
+            else:
+              newFinger = True
+              
+          else:
+            newFinger = False
         except IndexError:
           oldLoopData = makeAFor
           loopData = 0
+          newFinger = False
           makeAFor = 0
           IfinishedToDraw = True
+          break
+
+        try:
+          if coordinatesOfLayer[loopData - 3] == releaseSeparator:
+            newFingerBegin = True
+
+        except IndexError:
+          pass
 
         # BUILDER
-        # Condition is just to change the width of the line
-        if iPressedPartialButton:
-          pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 5)
-        else:
-          pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 4)
+        # Draw the end of lines (Triangle)
+        if newFinger:
+          points = [(endx-6, endy), (endx+6, endy), (endx, endy - 15)]
+          pygame.draw.polygon(ecran, black, points, 2)
+
+        # Draw Begin Of Lines
+        if newFingerBegin:
+          pygame.draw.circle(ecran, black, (int(startx), int(starty)), 6)
+          newFingerBegin = False
+
+        # Draw Lines
+        pygame.draw.aaline(ecran, lineColor, (startx, starty), (endx, endy), 10)
+        
+        #Draw Begin Of Lines
+        if loopData < 4:
+          pygame.draw.circle(ecran, black, (int(startx), int(starty)), 6)
 
         loopData += 2
     
@@ -1355,12 +1428,20 @@ while run:
         # local variable "myFinalList" referenced before assignement
         pass
 
+
   if not(iPressedMyStopButton):  
     if iAmOnMultipleTouch == False:
       loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
     else:
-      loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
-
+      if iPressedMyButton:
+        bigList = []
+      if iPressedTotalButton:
+        if len(bigList) < (lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2] + lenOfMyList[3] + lenOfMyList[4]):
+          bigList += myFinalList
+        if len(bigList) >= (lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2] + lenOfMyList[3] + lenOfMyList[4]):
+          loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(bigList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
+      else:
+        loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
   if iPressedMyStopButton:
     tempLists = []
     myFinalList = []

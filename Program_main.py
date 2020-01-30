@@ -1390,7 +1390,6 @@ while run:
   xScreenShotButton, yScreenShotButton, screenShotButtonColor, iPressedMyScreenShotButton, lblScreenShotButton, iPressedMyStopButton = buttonClickMaster(font, xScreenShotButton, yScreenShotButton, screenShotButtonColor, iPressedMyScreenShotButton, lblScreenShotButton, iPressedMyStopButton, labelString)
   # -----------------------------------
 
-
   # SAVE A SCREENSHOT
   try:
     if iPressedMyScreenShotButton:
@@ -1494,7 +1493,6 @@ while run:
     errorMessage = "Wrong FILE TYPE"
   #--------------------------------------------------------
 
-  
   # Draw the PATH AREA and the letter input
   xText, yText, user_input = drawPathArea(user_input, xText, yText)
 
@@ -1508,7 +1506,6 @@ while run:
     pygame.draw.rect(ecran, whiteBackground, (1010,20,200,23))
 
   if iPressedMyButton:
-    
     if doesMyFileExist:
       # Show a wait label
       ecran.blit(lblLoading, (300,300))

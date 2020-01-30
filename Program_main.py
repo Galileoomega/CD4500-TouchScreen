@@ -1192,7 +1192,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
           newFingerBegin = False
 
         # Draw Lines
-        pygame.draw.aaline(ecran, lineColor, (startx, starty), (endx, endy), 10)
+        pygame.draw.line(ecran, lineColor, (startx, starty), (endx, endy), 3)
         
         #Draw Begin Of Lines
         if loopData < 4:

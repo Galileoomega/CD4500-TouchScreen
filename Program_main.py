@@ -95,7 +95,7 @@ yStopButton = yButton
 xScreenShotButton = 20
 yScreenShotButton = 530
     # OUTPUT CONSOLE
-xOutput = 320
+xOutput = 300
 yOutput = 550
 
   # SIZE VAR
@@ -225,7 +225,7 @@ def printSpaces(wordlength):
 def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress, max47Code, spacelabel):
 
   # OUTPUT CONSOLE Area
-  pygame.draw.rect(ecran, whiteVisualiser, (xOutput, yOutput, 550, 100))
+  pygame.draw.rect(ecran, whiteVisualiser, (xOutput, yOutput, 570, 100))
   # MAIN LABEL
   ecran.blit(lblConsoleOutput, (xOutput, yOutput - 20))
   
@@ -311,14 +311,26 @@ def console(myConsoleMessage, lblConsoleOutput, coordinateOfLayer, howManyPress,
   spacelabel = printSpaces(15)
   lblPosition = str(lblPosX) + " x", str(lblPosY) + " y"
   lblConsoleOutput6 = consoleFont.render("Actual Position :" + spacelabel + str(lblPosition), True, black)
-  #--------------------------------------------------------------------------------------
+  #-------------------------------------------------------------------------------------
+
+  #----------------------------LABEL7 (Number Of Coordinates)-------------------------------------
+  spacelabel = printSpaces(21)
+  if iPressedMySingleButton:
+    myLen = len(coordinatesOfLayer)
+  else:
+    myLen = (lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2] + lenOfMyList[3] + lenOfMyList[4])
+
+  lblConsoleOutput7 = consoleFont.render("Total of positions :" + spacelabel + str(myLen), True, black)
+  #-----------------------------------------------------------------------------------------------
+
 
   ecran.blit(lblConsoleOutput1, (xOutput + 5, yOutput))
-  ecran.blit(lblConsoleOutput2, (xOutput + 300, yOutput))
+  ecran.blit(lblConsoleOutput2, (xOutput + 320, yOutput))
   ecran.blit(lblConsoleOutput3, (xOutput + 5, yOutput + 23))
   ecran.blit(lblConsoleOutput4, (xOutput + 5, yOutput + 40))
   ecran.blit(lblConsoleOutput5, (xOutput + 5, yOutput + 56))
   ecran.blit(lblConsoleOutput6, (xOutput + 5, yOutput + 73))
+  ecran.blit(lblConsoleOutput7, (xOutput + 320, yOutput + 23))
   return myConsoleMessage, howManyPress, spacelabel
 
 
@@ -1163,15 +1175,15 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
         except IndexError:
           pass
 
-        # BUILDER
+        # -------------BUILDER-------------
         # Draw the end of lines (Triangle)
         if newFinger:
-          points = [(endx-6, endy), (endx+6, endy), (endx, endy - 15)]
+          points = [(endx-5, endy), (endx+5, endy), (endx, endy - 10)]
           pygame.draw.polygon(ecran, black, points, 2)
 
         # Draw Begin Of Lines
         if newFingerBegin:
-          pygame.draw.circle(ecran, black, (int(startx), int(starty)), 6)
+          pygame.draw.circle(ecran, black, (int(startx), int(starty)), 5)
           newFingerBegin = False
 
         # Draw Lines
@@ -1179,7 +1191,7 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
         
         #Draw Begin Of Lines
         if loopData < 4:
-          pygame.draw.circle(ecran, black, (int(startx), int(starty)), 6)
+          pygame.draw.circle(ecran, black, (int(startx), int(starty)), 5)
 
         loopData += 2
     

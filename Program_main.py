@@ -46,6 +46,7 @@ green = (0, 153, 77)
 purple = (152, 3, 252)
 orange = (252, 115, 3)
 cyan = (3, 252, 240)
+lineColor = red
 
 otherWhite = whiteVisualiser = myChangingColor = stopButtonColor = partialButtonColor = totalButtonColor = (220, 220, 220)
 screenShotButtonColor = whiteVisualiser
@@ -56,14 +57,7 @@ customBlack = (33,29,50)
   # Color of the background
 whiteBackground = (250, 250, 250)
 
-color0 = red
-color1 = blue
-color2 = green
-color3 = purple
-color4 = orange
-color5 = cyan
 
-lineColor = red
 
 #POSITION VAR
 pos = pos1 = 0, 0
@@ -97,8 +91,12 @@ yScreenShotButton = 530
     # OUTPUT CONSOLE
 xOutput = 300
 yOutput = 550
+  # BACKGROUND INPUT BAR management
+location = (0,0)
+x = location[0]
+y = location[1]
 
-  # SIZE VAR
+# SIZE VAR
 heightInput = 50
 widthInput = 1000
 posXInput = 90
@@ -120,10 +118,7 @@ blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
 greyCross = pygame.image.load('Resources\\cross.png').convert_alpha()
 greyCross = pygame.transform.scale(greyCross, (80,80))
-  # BACKGROUND INPUT BAR management
-location = (0,0)
-x = location[0]
-y = location[1]
+  
 temp = pygame.Surface((blackBackground.get_width(), blackBackground.get_height())).convert()
 temp.blit(ecran, (-x, -y))
 temp.blit(blackBackground, (0, 0))
@@ -823,7 +818,6 @@ def writingMultipleLines(lenOfMyList, perkCount, max47Code, tempLists, validStat
     oldPerkCount = 0
     resetList = True
 
-
   if iPressedMyButton:
     if iPressedPartialButton:
       if perkCount == max47Code:
@@ -1007,7 +1001,6 @@ def whereToDrawLine(finalListOfData, coordinatesOfLayer):
 # GRAPHIC : Draw simulation line 
 def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount):
     IfinishedToDraw = False
-    lineColor = red
     newFinger = False
     newFingerBegin = False
 
@@ -1053,19 +1046,19 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
           try:
             if loopData > lenOfMyList[2]:
               if loopData < lenOfMyList[3]:
-                lineColor = color3
+                lineColor = purple
           except IndexError:
             pass
           try:
             if loopData > lenOfMyList[3]:
               if loopData < lenOfMyList[4]:
-                lineColor = color4
+                lineColor = orange
           except IndexError:
             pass
           try:
             if loopData > lenOfMyList[4]:
               if loopData < lenOfMyList[5]:
-                lineColor = color1
+                lineColor = blue
           except IndexError:
             pass
         # FOR TOTAL MOD
@@ -1092,24 +1085,23 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
           try:
             if loopData > lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2]:
               if loopData < lenOfMyList[0] + lenOfMyList[1] + lenOfMyList[2] + lenOfMyList[3]:
-                lineColor = color3
+                lineColor = purple
           except IndexError:
             pass
           try:
             if loopData > lenOfMyList[3]:
               if loopData < lenOfMyList[4]:
-                lineColor = color4
+                lineColor = orange
           except IndexError:
             pass
           try:
             if loopData > lenOfMyList[4]:
               if loopData < lenOfMyList[5]:
-                lineColor = color1
+                lineColor = blue
           except IndexError:
             pass
-
       else:
-        lineColor = color0
+        lineColor = red
       #--------------------------------------
       firstPass = True
       try:
@@ -1361,13 +1353,15 @@ while run:
       iPressedMyButton = False
   
   if iPressedMyMultiButton:
-      iAmOnMultipleTouch = True
-      if max47Code == 0:
-        iPressedMyButton = False
-        iPressedMyStopButton = True
-        iAmOnMultipleTouch = False
-  else:
+    coordinatesOfLayer = []
+    iAmOnMultipleTouch = True
+    if max47Code == 0:
+      iPressedMyButton = False
+      iPressedMyStopButton = True
       iAmOnMultipleTouch = False
+  else:
+    myFinalList = []
+    iAmOnMultipleTouch = False
 
   # ---------- BUTTONS CHECK ----------  
   labelString = "Calculate..."
@@ -1454,7 +1448,9 @@ while run:
           loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(bigList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
       else:
         loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount, lblPosX, lblPosY = drawLine(myFinalList, validState, loopData, makeAFor, IfinishedToDraw, oldLoopData, oldPerkCount)
-  if iPressedMyStopButton:
+  else:
+    bigList = []
+    coordinatesOfLayer = []
     tempLists = []
     myFinalList = []
     open('appender.py', 'w').close()
@@ -1462,7 +1458,7 @@ while run:
 
   # Draw a label "EV Test :"
   ecran.blit(lblFindEvtest, (700, 20))
-
+  print(max47Code)
   # ---------------- ERROR MANAGEMENT ------------------
   if not(doesMyFileExist):
     multiButtonError = False
@@ -1474,7 +1470,7 @@ while run:
 
   if iPressedMyButton:
     if iPressedMyMultiButton:
-        if max47Code == 0:
+        if max47Code == 1:
           singleButtonError = True
           oldPath = "lala"
         else:
@@ -1492,10 +1488,10 @@ while run:
 
   if singleButtonError:
     ecran.blit(lblSingleError, (xPathField, yPathField + 25))
-    errorMessage = "Should be Single-Touch mode"
+    errorMessage = "Wrong FILE TYPE"
   if multiButtonError:
     ecran.blit(lblMultiError, (xPathField, yPathField + 25))
-    errorMessage = "Should be Multi-Touch mode"
+    errorMessage = "Wrong FILE TYPE"
   #--------------------------------------------------------
 
   

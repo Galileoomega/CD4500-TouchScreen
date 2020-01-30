@@ -7,6 +7,8 @@
 import pygame, os, re, time
 from importlib import reload
 
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+
 # INITIALISATION
 pygame.init()
 ecran = pygame.display.set_mode((1180, 700))
@@ -28,8 +30,8 @@ iAmOnMultipleTouch = False
 IfinishedToDraw = True
   # Button State
 iPressedMyButton = iPressedMyStopButton = False
-iPressedTotalButton = iPressedMySingleButton = False
-iPressedPartialButton = iPressedMyMultiButton = True
+iPressedPartialButton = iPressedMySingleButton = False
+iPressedTotalButton = iPressedMyMultiButton = True
 iPressedMyScreenShotButton = False
   # Error State
 singleButtonError = False
@@ -111,12 +113,23 @@ myFileName = ""
 makeAFor = 1
 artefactDetector = 0
 
+# ---------PATH---------
+cursorPNG = os.path.join(THIS_FOLDER, 'Resources\\cursor.png')
+resizeCursorPNG = os.path.join(THIS_FOLDER, 'Resources\\resizeCursor.png')
+PNG00 = os.path.join(THIS_FOLDER, 'Resources\\00.png')
+crossPNG = os.path.join(THIS_FOLDER, 'Resources\\cross.png')
+openSansTTF = os.path.join(THIS_FOLDER, 'Resources\\OpenSans-Light.ttf')
+openBoldTTF = os.path.join(THIS_FOLDER, 'Resources\\OpenSans-Bold.ttf')
+inconsolataTTF = os.path.join(THIS_FOLDER, 'Resources\\Inconsolata\\Inconsolata-Regular.ttf')
+crossPNG = os.path.join(THIS_FOLDER, 'Resources\\cross.png')
+# ----------------------
+
 # MEDIA IMAGE
-MANUAL_CURSOR = pygame.image.load('Resources\\cursor.png').convert_alpha()
-RESIZE_CURSOR = pygame.image.load('Resources\\resizeCursor.png').convert_alpha()
-blackBackground = pygame.image.load('Resources\\00.png').convert_alpha()
+MANUAL_CURSOR = pygame.image.load(cursorPNG).convert_alpha()
+RESIZE_CURSOR = pygame.image.load(resizeCursorPNG).convert_alpha()
+blackBackground = pygame.image.load(PNG00).convert_alpha()
 blackBackground = pygame.transform.scale(ecran, (1300,800))
-greyCross = pygame.image.load('Resources\\cross.png').convert_alpha()
+greyCross = pygame.image.load(crossPNG).convert_alpha()
 greyCross = pygame.transform.scale(greyCross, (80,80))
   
 temp = pygame.Surface((blackBackground.get_width(), blackBackground.get_height())).convert()
@@ -154,12 +167,12 @@ bigList = []
 
 #TEXT MANAGE
   #---Define font---
-font = pygame.font.Font('Resources\\OpenSans-Light.ttf', 14)
-waitFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 24)
-secondFont = pygame.font.Font('Resources\\OpenSans-Light.ttf', 16)
+font = pygame.font.Font(openSansTTF, 14)
+waitFont = font
+secondFont = pygame.font.Font(openSansTTF, 16)
 font2 = pygame.font.Font('freesansbold.ttf', 32)
-errorFont = pygame.font.Font('Resources\\OpenSans-Bold.ttf', 12)
-consoleFont = pygame.font.Font('Resources\\Inconsolata\\Inconsolata-Regular.ttf', 14)
+errorFont = pygame.font.Font(openBoldTTF, 12)
+consoleFont = pygame.font.Font(inconsolataTTF, 14)
   #-----------------
   #---Define text---
 lblFindEvtest = font.render(str("File EVTEST :"), True, black)
@@ -1315,7 +1328,6 @@ while run:
       path, iChangedMyPath, oldPath, firstTime = pathChecker(path, iChangedMyPath, oldPath, firstTime)
     if iChangedMyPath:
       if not(singleButtonError):
-        print(singleButtonError)
         coordinatesOfLayer = []
         myFinalList = []
         oldPath = path
@@ -1457,7 +1469,6 @@ while run:
 
   # Draw a label "EV Test :"
   ecran.blit(lblFindEvtest, (700, 20))
-  print(max47Code)
   # ---------------- ERROR MANAGEMENT ------------------
   if not(doesMyFileExist):
     multiButtonError = False

@@ -1,7 +1,7 @@
 # CD4500-TouchScreen
 
 <h2><b>INSTALLATION</b></h2>
-
+<h3>Linux :</h3>
   cd <i>To Program Location Folder</i>:<br>
   sudo pip install -r requirements.txt
 

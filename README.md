@@ -2,9 +2,8 @@
 
 <h2><b>INSTALLATION</b></h2>
 
-  cd :<i>Program Location Folder</i>:<br>
-  pip install -r requirements.txt
-
+  cd <i>To Program Location Folder</i>:<br>
+  sudo pip install -r requirements.txt
 
 For input path navigation you can't use keyboard arrow or mouse.
 Only CTRL + A and CTRL + V are available.

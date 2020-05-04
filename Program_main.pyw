@@ -1052,12 +1052,14 @@ def drawLine(coordinatesOfLayer, validState, loopData, makeAFor, IfinishedToDraw
 
     index = max47Code
 
-    if makeAFor * (timeSequense / 100) == 0.0:
-      makeAFor = 0
-    else:
-      makeAFor -= 500
-      makeAFor = int(makeAFor * (timeSequense / 100))
-      loopData = 0
+    if iPressedTotalButton:
+      if makeAFor * (timeSequense / 100) == 0.0:
+        makeAFor = 0
+      else:
+        makeAFor /= 2
+        makeAFor = int(makeAFor * (timeSequense / 100))
+        loopData = 0
+      print(makeAFor)
 
     for u in range(0, makeAFor):
 

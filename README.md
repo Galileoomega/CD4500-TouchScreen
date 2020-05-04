@@ -5,6 +5,7 @@
   cd <i>To Program Location Folder</i>:<br>
   sudo pip install -r requirements.txt
 
+<h2>NOTES :</h2>
 For input path navigation you can't use keyboard arrow or mouse.
 Only CTRL + A and CTRL + V are available.
 
